@@ -1,0 +1,34 @@
+﻿@model AppUserModel
+@{
+	ViewData["Title"] = "Forget Pass ";
+}
+<section id="">
+	<!--form-->
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-8 col-sm-offset-1">
+				<div class="signup-form">
+					<!--sign up form-->
+					<h2>Forget Pass </h2>
+					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+					<form asp-action="SendMailForgotPass" asp-controller="Account">
+
+						<div class="form-group">
+							<label> Email</label>
+							<input asp-for="Email" class="form-control" />
+							<span asp-validation-for="Email" class="text-danger" />
+						</div>
+
+						<button class="btn btn-default">Send </button>
+						<a asp-action="ForgetPass" asp-controller="Account">Register </a>
+					</form>
+				</div><!--/sign up form-->
+			</div>
+		</div>
+	</div>
+</section><!--/form-->
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

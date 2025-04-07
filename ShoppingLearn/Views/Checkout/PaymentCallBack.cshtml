@@ -1,0 +1,12 @@
+﻿@model MomoExecuteResponseModel
+
+
+@{
+    ViewData["title"] = " Kết quả giao dịch  thành công";
+}
+
+<h5> Thanh toán momo thành công với:</h5>
+<h6> OrderId: @Model.OrderId</h6>
+<h6>OrderInfo: @Model.OrderInfo</h6>
+<h6>Tổng tiền: @Model.Amount</h6>
+<h5> Xem <a asp-controller="Account" asp-action="History">Lịch sử đơn đặt hàng</a></h5>
