@@ -6,6 +6,7 @@ using ShoppingLearn.Models.Momo;
 using ShoppingLearn.Repository;
 using ShoppingLearn.Services.Momo;
 using ShoppingLearn.Services.Vnpay;
+using ShoppingLearn.Services.Chatbot;
 
 var builder = WebApplication.CreateBuilder(args);
 //////Connected sql
@@ -18,15 +19,21 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectedDb"))
 );
-// khai b·o vnpay api
+// khai bÔøΩo vnpay api
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 
-// Khai b·o momo api 
+// Khai bÔøΩo momo api 
 //Connect MomoAPI
 builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
 builder.Services.AddScoped<IMomoService, MomoService>();
 // add Email Sender
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+// ƒêƒÉng k√Ω Chatbot Services v·ªõi Dependency Injection
+builder.Services.AddScoped<IGeminiService, GeminiService>();
+builder.Services.AddScoped<IChromaService, ChromaService>();
+builder.Services.AddScoped<ISqlQueryService, SqlQueryService>();
+builder.Services.AddScoped<IChatbotService, ChatbotService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -37,7 +44,7 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.IsEssential = true;
 });
-// ??ng k˝ Identity
+// ??ng kÔøΩ Identity
 builder.Services.AddIdentity<AppUserModel, IdentityRole>()
 	.AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
 
