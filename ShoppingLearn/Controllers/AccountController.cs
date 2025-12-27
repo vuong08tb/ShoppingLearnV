@@ -28,6 +28,7 @@ namespace ShoppingLearn.Controllers
 			return View(new LoginViewModel { ReturnUrl = returnUrl });
 		}
 		// UpdateAccount
+		[HttpGet]			
 		public async Task<IActionResult> UpdateAccount()
 		{
 			if ((bool)!User.Identity?.IsAuthenticated)
@@ -57,8 +58,10 @@ namespace ShoppingLearn.Controllers
 			{
 				return NotFound();
 			}
+			
 			else
 			{
+				userById.PhoneNumber = user.PhoneNumber;
 				var passwordHasher = new PasswordHasher<AppUserModel>();
 				var passwordHash = passwordHasher.HashPassword(userById, user.PasswordHash);
 
@@ -211,26 +214,67 @@ namespace ShoppingLearn.Controllers
 
         [HttpPost]
 		[ValidateAntiForgeryToken]
+		//public async Task<IActionResult> Create(UserModel user)
+		//{
+		//	if (ModelState.IsValid)
+		//	{
+		//		AppUserModel newUser = new AppUserModel { UserName = user.Username, Email = user.Email, RoleId = "3" };
+		//		IdentityResult result = await _userManager.CreateAsync(newUser, user.Password);
+		//		var addToRoleResult = await _userManager.AddToRoleAsync(newUser, "User");
+		//		if (result.Succeeded && addToRoleResult.Succeeded)
+		//		{
+		//			TempData["success"] = " Tạo user thành công";
+		//			return Redirect("/account/login");
+
+		//		}
+		//		foreach (IdentityError error in result.Errors)
+		//		{
+		//			ModelState.AddModelError("", error.Description);
+		//		}
+		//	}
+
+		//	return View(user);
+		//}
 		public async Task<IActionResult> Create(UserModel user)
 		{
 			if (ModelState.IsValid)
 			{
-				AppUserModel newUser = new AppUserModel { UserName = user.Username, Email = user.Email };
+				AppUserModel newUser = new AppUserModel
+				{
+					UserName = user.Username,
+					Email = user.Email
+				};
+
 				IdentityResult result = await _userManager.CreateAsync(newUser, user.Password);
+
 				if (result.Succeeded)
 				{
-					TempData["success"] = " Tạo user thành công";
-					return Redirect("/account/login");
-
+					var addToRoleResult = await _userManager.AddToRoleAsync(newUser, "User");
+					if (addToRoleResult.Succeeded)
+					{
+						TempData["success"] = "Tạo user thành công";
+						return Redirect("/account/login");
+					}
+					else
+					{
+						foreach (var error in addToRoleResult.Errors)
+						{
+							ModelState.AddModelError("", error.Description);
+						}
+					}
 				}
-				foreach (IdentityError error in result.Errors)
+				else
 				{
-					ModelState.AddModelError("", error.Description);
+					foreach (IdentityError error in result.Errors)
+					{
+						ModelState.AddModelError("", error.Description);
+					}
 				}
 			}
 
-			return View();
+			return View(user);
 		}
+
 		public async Task<IActionResult> Logout(string returnUrl = "/")
 		{
 			await _signInManager.SignOutAsync();

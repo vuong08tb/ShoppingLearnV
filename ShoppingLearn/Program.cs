@@ -5,6 +5,7 @@ using ShoppingLearn.Models;
 using ShoppingLearn.Models.Momo;
 using ShoppingLearn.Repository;
 using ShoppingLearn.Services.Momo;
+using ShoppingLearn.Services.Vnpay;
 
 var builder = WebApplication.CreateBuilder(args);
 //////Connected sql
@@ -17,6 +18,9 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectedDb"))
 );
+// khai báo vnpay api
+builder.Services.AddScoped<IVnPayService, VnPayService>();
+
 // Khai báo momo api 
 //Connect MomoAPI
 builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
@@ -42,7 +46,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 {
 	// Password settings.
 	options.Password.RequireDigit = true;
-	options.Password.RequireLowercase = true;
+	options.Password.RequireLowercase = false;
 	options.Password.RequireNonAlphanumeric = false;
 	options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 4;

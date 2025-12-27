@@ -21,5 +21,6 @@ namespace ShoppingLearn.Repository
 		public DbSet<CouponModel> Coupons { get; set; }
 		public DbSet<StatisticalModel> Statisticals { get; set; }
 		public DbSet<MomoInfoModel> MomoInfos { get; set; }
+		public DbSet<VnpayModel> VnInfos { get; set; }
     }
 }

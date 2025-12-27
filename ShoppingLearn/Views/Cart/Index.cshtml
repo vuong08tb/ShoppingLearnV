@@ -12,12 +12,12 @@
 			<table class="table table-condensed">
 				<thead>
 					<tr class="cart_menu">
-						<td class="image">Item</td>
-						<td class="description"></td>
-						<td class="price">Price</td>
-						<td class="quantity">Quantity</td>
-						<td class="total">Total</td>
-						<td></td>
+						<th class="image" style="width: 100px;">Item</th>
+						<th colspan="4" class="description" style="width: 120px;">Title</th>
+						<th class="price">Price</th>
+						<th class="quantity" style="width: 120px;">Quantity</th>
+						<th class="total">Total</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -27,11 +27,11 @@
 						{
 							<tr>
 								<td class="cart_product">
-									<a href=""><img src="~/media/products/@item.Image" alt="" width="70px" height="100px"></a>
+									<a href=""><img src="~/media/products/@item.Image" alt="" width="70px" height="70px"></a>
 								</td>
-								<td class="cart_description">
-									<h4><a href="">@item.ProductName</a></h4>
-									
+								<td colspan='4' class="cart_description fw-500">
+									@* <h4><a href="">@item.ProductName</a></h4> *@
+									<span>@item.ProductName</span>
 								</td>
 								<td class="cart_price">
 									<p>@item.Price.ToString("#,##0 VNĐ")</p>
@@ -41,7 +41,7 @@
 									<a class="btn btn-success btn-sm" asp-controller="Cart" asp-action="Increase" asp-route-id="@item.ProductId"> + </a>
 										<input class="cart_quantity_input" type="text" name="quantity" value="@item.Quantity" autocomplete="off" size="2">
 										<a class="btn btn-success btn-sm" asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.ProductId"> - </a>
-										<a class="btn btn-danger btn-sm" asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId"> Remove </a>
+										@* <a class="btn btn-danger btn-sm" asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId"> Remove </a> *@
 							
 								</td>
 								<td class="cart_total">
@@ -55,15 +55,15 @@
 					
 						<tr>
 							<td colspan="5">  
-								GrandTotal: <p class="cart_total_price"> @Model.GrandTotal.ToString("#,##0 VNĐ") </p>
+								GrandTotal: <p class="cart_total_price" id="grand_price"> @Model.GrandTotal.ToString("#,##0 VNĐ") </p>
 								<form>
 									Coupon Code: <input type="text" class="form-control coupon-value" />
-									<span class="text text-success">@Model.CouponCode</span> <br />
+									<span class="text text-success" id="coupon_text">@Model.CouponCode</span> <br />
 
-									<input type="button" value="Apply" class="btn btn-sm btn-primary btn-apply-coupon" />
+									<input type="button" value="Apply" class="btn btn-sm btn-primary btn-apply-coupon btn-apply" />
 								</form>
 
-								Shipping Cost: <p class="cart_total_price"> @Model.ShippingCost.ToString("#,##0 VNĐ") </p>
+								Shipping Cost: <p class="cart_total_price" id="shipping_text"> @Model.ShippingCost.ToString("#,##0 VNĐ") </p>
 								<p> <a asp-action="DeleteShipping" asp-controller="Cart">Xóa shipping</a>  </p>
 							    </td>
 							    <td>
@@ -87,34 +87,45 @@
 										<option value="0">Phường Xã</option>
 									</select>
 								</div>
-								<button type="button" class="btn btn-primary btn-add-shipping">Tính phí vận chuyển</button>
-
-
+								<button type="button" class="btn btn-primary btn-add-shipping btn-apply">Tính phí vận chuyển</button>
 							</td>
-
-							<td> <a class="btn btn-danger btn-sm" asp-controller="Cart" asp-action="Clear" > Clear </a></td>
 							@if (User.Identity?.IsAuthenticated ?? false)
 							{
 								<td> 
 									@if(@Model.ShippingCost <= 0)
 									{
-										<a disable="disable" onclick="return confirm('Xác nhận đặt hàng')" class="btn btn-primary btn-sm" asp-controller="Checkout" asp-action="Checkout"> Đặt hàng </a> <br />
 										<span class="text text-danger">Yêu cầu tính phí vận chuyển trước khi đặt hàng </span>
 									}
 									else
 									{
-										<a  class="btn btn-primary btn-sm" asp-controller="Checkout" asp-action="Checkout"> Đặt hàng </a>
+										@* <a  class="btn btn-primary btn-sm" asp-controller="Checkout" asp-action="Checkout"> Đặt hàng </a> *@
 									}
 
 								</td>
 								<td>
+									<a class="btn btn-danger" asp-controller="Cart" asp-action="Clear" > Clear all cart</a><br/>
+									<a disable="disable" onclick="return confirm('Xác nhận đặt hàng')" class="btn btn-primary" asp-controller="Checkout" asp-action="Checkout"> Đặt hàng </a> <br />
 									<form method="POST" asp-action="CreatePaymentMomo" asp-controller="Payment">
+										<input type="hidden" name="FullName" value="@User.Identity.Name" />
 										<input  type="hidden" name="Amount" value="@Model.GrandTotal"/>
-										<input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()" />
+										
 										<input type="hidden" name="OrderInfo" value="Thanh toán Momo cho đơn hàng tại cửa hàng" />
-										<input type="hidden" name="FullName" value="Vuongdz" />
-										<button class="btn btn-danger" type="submit">Pay with MoMo</button>
 
+										<br />
+										<button class="btn btn-danger" name="PayUrl" type="submit">Pay with MoMo</button>
+
+									</form>
+									<form method="POST" asp-action="CreatePaymentUrlVnpay" asp-controller= "Payment">
+										<input type="hidden" name="Name" value="@User.Identity.Name" />
+										<input type="hidden" name="Amount" id="total_price" value="@Model.GrandTotal" />
+										<input type="hidden" name="Discount" id="discount" value="" />
+										<input type="hidden" name="Shipping" id="shipping_price" value="" />
+
+										<input type="hidden" name="OrderDescription" value="Thanh toán VnPay cho đơn hàng tại cửa hàng" />
+
+										<input type="hidden" name="OrderType" value="other" />
+										<br />
+										<button class="btn btn-success" type="submit">Pay with Vnpay</button>
 									</form>
 								</td>
 							}
@@ -178,7 +189,7 @@
 							// Handle successful update
 							if (result) {
 
-								location.reload();
+								location.reload(); 
 
 							}
 						}
@@ -224,5 +235,22 @@
 			});
 		});
 	</script>
-	
+	<script>
+		// document.addEventListener("DOMContentLoaded", function () {
+		document.getElementById("shipping_price").value = @Model.ShippingCost;
+
+		// Set value coupon
+		const element = document.querySelector("#coupon_text.text-success");
+		const text = element.innerText;
+
+		const match = text.match(/Giảm\s+([\d.,]+)%/);
+		const percent = match ? match[1] : null;
+		document.getElementById("discount").value = percent;
+
+		var final_price = (@Model.GrandTotal + @Model.ShippingCost) * (1 - percent/100.0);
+
+		document.getElementById("grand_price").innerText = final_price.toLocaleString("vi-VN") + " VNĐ";
+		document.getElementById("total_price").value = final_price;
+
+	</script>
 }

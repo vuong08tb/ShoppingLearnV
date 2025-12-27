@@ -10,5 +10,9 @@
 		public string UserName { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public int Status { get; set; }
-	}
+		public string ShippingAddress { get; set; }
+		public string Receiver { get; set; }
+		public string PhoneReceiver { get; set; }
+
+    }
 }

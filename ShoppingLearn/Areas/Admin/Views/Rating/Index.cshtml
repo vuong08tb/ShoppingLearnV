@@ -1,0 +1,43 @@
+﻿@model IEnumerable<ShoppingLearn.Models.RatingModel>
+
+@{
+    ViewData["Title"] = "List Ratings";
+}
+
+<h2 class="mb-4">Danh sách bình luận sản phẩm</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Id</th>
+            <th>ProductId</th>
+            <th>Comment</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Star</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.Id</td>
+                    <td>@r.ProductId</td>
+                    <td>@r.Comment</td>
+                    <td>@r.Name</td>
+                    <td>@r.Email</td>
+                    <td>@r.Star</td>
+                    <td>
+                    <form asp-action="Delete" method="post" style="display:inline;"
+                          onsubmit="return confirm('Bạn có chắc muốn xóa bình luận này không?');">
+                        <input type="hidden" name="id" value="@r.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                    </form>
+                    </td>
+                </tr>
+            
+            }
+ 
+    </tbody>
+</table>
+

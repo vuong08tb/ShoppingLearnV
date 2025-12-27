@@ -36,6 +36,28 @@ namespace ShoppingLearn.Areas.Admin.Controllers
 
             return View(DetailsOrder);
         }
+        [HttpGet]
+        [Route("PaymentMomoInfo")]
+		public async Task<IActionResult> PaymentMomoInfo(string orderId)
+		{
+			var momoInfo = await _datacontext.MomoInfos.FirstOrDefaultAsync(m => m.OrderId == orderId);
+			if(momoInfo == null)
+			{
+				return NotFound();
+			}
+			return View(momoInfo);
+		}
+        [HttpGet]
+        [Route("PaymentVnpayInfo")]
+        public async Task<IActionResult> PaymentVnpayInfo(string orderId)
+        {
+            var vnpayInfo = await _datacontext.VnInfos.FirstOrDefaultAsync(m => m.PaymentId == orderId);
+            if (vnpayInfo == null)
+            {
+                return NotFound();
+            }
+            return View(vnpayInfo);
+        }
         [HttpPost]
         [Route("UpdateOrder")]
 		public async Task<IActionResult> UpdateOrder(string ordercode, int status)

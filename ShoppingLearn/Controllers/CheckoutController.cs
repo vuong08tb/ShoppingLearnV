@@ -6,6 +6,8 @@ using ShoppingLearn.Areas.Admin.Repository;
 using ShoppingLearn.Models;
 using ShoppingLearn.Repository;
 using ShoppingLearn.Services.Momo;
+using ShoppingLearn.Services.Vnpay;
+using System;
 using System.Security.Claims;
 
 namespace ShoppingLearn.Controllers
@@ -15,18 +17,20 @@ namespace ShoppingLearn.Controllers
 		private readonly DataContext _dataContext;
         private readonly IEmailSender _emailSender;
         private readonly IMomoService _moMoService;
-        private static readonly HttpClient client = new HttpClient();
-        public CheckoutController(IEmailSender emailSender,DataContext context,IMomoService momoService)
+		private readonly IVnPayService _vnPayService;
+		private static readonly HttpClient client = new HttpClient();
+        public CheckoutController(IEmailSender emailSender,DataContext context,IMomoService momoService, IVnPayService vnPayService)
 		{
 			_dataContext = context;
 			_emailSender = emailSender;
 			_moMoService = momoService;
+			_vnPayService = vnPayService;
 		}
         public IActionResult Index()
         {
             return View();
         }
-        public async Task<IActionResult> Checkout()
+        public async Task<IActionResult> Checkout(string PaymentMethod,string PaymentId)
 		{
 			var userEmail = User.FindFirstValue(ClaimTypes.Email);
 			if(userEmail == null)
@@ -47,11 +51,28 @@ namespace ShoppingLearn.Controllers
 					var shippingPriceJson = shippingPriceCookie;
 					shippingPrice = JsonConvert.DeserializeObject<decimal>(shippingPriceJson);
 				}
+				else
+				{
+					shippingPrice = 0;
+				} 
+				
 				// nhận coupon từ cookie
 				var coupon_code = Request.Cookies["CouponTitle"];
 				orderItem.ShippingCost = shippingPrice;
 				orderItem.CouponCode = coupon_code;
 				orderItem.UserName = userEmail;
+				if(PaymentMethod == "VnPay")
+				{
+					orderItem.PaymentMethod = "VnPay" + " " + PaymentId;
+				}
+				else {
+					if(PaymentMethod == "Momo"){
+						orderItem.PaymentMethod = "Momo" + " " + PaymentId;
+					} else {
+					orderItem.PaymentMethod = "COD";
+					}
+				}
+				// orderItem.PaymentMethod = PaymentMethod + " " + PaymentId;
 				orderItem.Status = 1;
 				orderItem.CreatedDate = DateTime.Now;
 				_dataContext.Add(orderItem);
@@ -94,25 +115,57 @@ namespace ShoppingLearn.Controllers
 		{
 			var response = _moMoService.PaymentExecuteAsync(HttpContext.Request.Query);
 			var requestQuery = HttpContext.Request.Query;
-			//if (requestQuery["resultCode"] != 0) // giao dịch không thành công thì lưu
-			//{
-			//	var newMomoInsert = new MomoInfoModel
-			//	{
-			//		OrderId = requestQuery["orderId"],
-			//		FullName = User.FindFirstValue(ClaimTypes.Email),
-			//		Amount = decimal.Parse(requestQuery["Amount"]),
-			//		OrderInfo = requestQuery["orderInfo"],
-			//		DatePaid = DateTime.Now,
-			//	};
-			//	_dataContext.Add(newMomoInsert);
-			//	await _dataContext.SaveChangesAsync();
-			//}
-			//else
-			//{
-			//	TempData["success"] = " Giao dịch Momo không thành công";
-			//	return RedirectToAction("Index", "Cart");
-			//}
-			//var checkoutResult = await Checkout(requestQuery["orderId"]);
+			if (requestQuery["resultCode"] != 0) // giao dịch không thành công thì lưu
+			{
+				var newMomoInsert = new MomoInfoModel
+				{
+					OrderId = requestQuery["orderId"],
+					FullName = User.FindFirstValue(ClaimTypes.Email),
+					Amount = decimal.Parse(requestQuery["Amount"]),
+					OrderInfo = requestQuery["orderInfo"],
+					DatePaid = DateTime.Now,
+				};
+				_dataContext.Add(newMomoInsert);
+				await _dataContext.SaveChangesAsync();
+				// 
+				var PaymentMethod = "Momo";
+				await Checkout(PaymentMethod, requestQuery["orderId"]);
+			}
+            else
+			{
+				TempData["success"] = " Giao dịch Momo không thành công";
+				return RedirectToAction("Index", "Cart");
+			}
+			
+			return View(response);
+		}
+		[HttpGet]
+		public async  Task<IActionResult> PaymentCallbackVnpay()
+		{
+			var response = _vnPayService.PaymentExecute(Request.Query);
+			if (response.VnPayResponseCode == "00") // giao dịch không thành công thì lưu
+			{
+				var newVnpayInsert = new VnpayModel
+				{
+					OrderId = response.OrderId,
+					PaymentMethod = response.PaymentMethod,
+					OrderDescription = response.OrderDescription,
+					TransactionId = response.TransactionId,
+					PaymentId = response.PaymentId,
+					DateCreated = DateTime.Now
+				};
+				_dataContext.Add(newVnpayInsert);
+				await _dataContext.SaveChangesAsync();
+				// 
+				var PaymentMethod =response.PaymentMethod;
+				var PaymentId = response.PaymentId;
+				 await Checkout(PaymentMethod,PaymentId);
+			}
+			else
+			{
+				TempData["success"] = " Giao dịch Vnpay thành công";
+				return RedirectToAction("Index", "Cart");
+			}
 			return View(response);
 		}
 	}

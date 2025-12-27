@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Home | E-Shopper</title>
+    <title>Home| Fashion's Men HV </title>
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
     <link href="~/css/prettyPhoto.css" rel="stylesheet">
@@ -28,7 +28,7 @@
 
 <body>
 	<header id="header"><!--header-->
-		<div class="header_top"><!--header_top-->
+		@* <div class="header_top"><!--header_top-->
 			<div class="container">
 				<div class="row">
 					<div class="col-sm-6">
@@ -53,7 +53,7 @@
 				</div>
 			</div>
 		</div><!--/header_top-->
-		
+		 *@
 		<div class="header-middle"><!--header-middle-->
 			<div class="container">
 				<div class="row">
@@ -61,19 +61,19 @@
 						<div class="logo pull-left">
 							<a href="index.html"><img src="images/home/logo.png" alt="" /></a>
 						</div>
-						<div class="btn-group pull-right">
+				@* 		<div class="btn-group pull-right">
 							<div class="btn-group">
 								<button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
 									USA
 									<span class="caret"></span>
 								</button>
-								<ul class="dropdown-menu">
+								@* <ul class="dropdown-menu">
 									<li><a href="#">Canada</a></li>
 									<li><a href="#">UK</a></li>
 								</ul>
-							</div>
+							</div> *@
 							
-							<div class="btn-group">
+					@* 		<div class="btn-group">
 								<button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
 									DOLLAR
 									<span class="caret"></span>
@@ -83,7 +83,7 @@
 									<li><a href="#">Pound</a></li>
 								</ul>
 							</div>
-						</div>
+						</div>  *@
 					</div>
 					<div class="col-sm-8">
 						<div class="shop-menu pull-right">
@@ -131,7 +131,7 @@
 						</div>
 						<div class="mainmenu pull-left">
 							<ul class="nav navbar-nav collapse navbar-collapse">
-								<li><a asp-controller="Home" class="active">Home</a></li>
+								<li><a href="/" class="active">Home</a></li>
 								<li class="dropdown">
 									<a asp-controller="Product">Shop<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
@@ -183,16 +183,16 @@
 						<div class="carousel-inner">
 							<div class="item active">
 								<div class="col-sm-12">
-									<img src="https://intphcm.com/data/upload/dung-luong-banner-thoi-trang.jpg" width="100%" />
+									<img src="~/images/artboard_34_2x-100_110325.jpg" width="100%"  />
 								</div>
 								
 							</div>
 							<div class="item">
-								<img src="https://intphcm.com/data/upload/banner-thoi-trang-nam.jpg" />
+								<img src="~/images/1366x532_280325.jpg" />
 							</div>
 							
 							<div class="item">
-								<img src="https://intphcm.com/data/upload/mau-banner-thoi-trang-nam.jpg" />
+								<img src="~/images/csdt_1366x532a.jpg" />
 							</div>
 							
 						</div>
@@ -214,13 +214,13 @@
 		<div class="container">
 			<div class="row">
 				@Html.Partial("_NotificationPartial")
-				@RenderBody();
+				@RenderBody()
 			</div>
 		</div>
 	</section>
 	
 	<footer id="footer"><!--Footer-->
-		<div class="footer-top">
+		@* <div class="footer-top">
 			<div class="container">
 				<div class="row">
 					<div class="col-sm-2">
@@ -298,26 +298,26 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> *@
 		
 		<div class="footer-widget">
 			<div class="container">
 				<div class="row">
 					<div class="col-sm-2">
 						<div class="single-widget">
-							<h2>Service</h2>
+							<h2>Dịch vụ</h2>
 							<ul class="nav nav-pills nav-stacked">
-								<li><a href="#">Online Help</a></li>
-								<li><a href="#">Contact Us</a></li>
+								<li><a href="#">Trợ giúp trực tuyến</a></li>
+								<li><a href="#">Liên hệ với chúng tôi</a></li>
 								<li><a href="#">Order Status</a></li>
-								<li><a href="#">Change Location</a></li>
+								<li><a href="#">Thay đổi vị trí</a></li>
 								<li><a href="#">FAQ’s</a></li>
 							</ul>
 						</div>
 					</div>
 					<div class="col-sm-2">
 						<div class="single-widget">
-							<h2>Quock Shop</h2>
+							<h2>Fashion Shop</h2>
 							<ul class="nav nav-pills nav-stacked">
 								<li><a href="#">T-Shirt</a></li>
 								<li><a href="#">Mens</a></li>
@@ -329,35 +329,35 @@
 					</div>
 					<div class="col-sm-2">
 						<div class="single-widget">
-							<h2>Policies</h2>
+							<h2>Chính sách</h2>
 							<ul class="nav nav-pills nav-stacked">
-								<li><a href="#">Terms of Use</a></li>
-								<li><a href="#">Privecy Policy</a></li>
-								<li><a href="#">Refund Policy</a></li>
-								<li><a href="#">Billing System</a></li>
-								<li><a href="#">Ticket System</a></li>
+								<li><a href="#">Điều khoản sử dụng</a></li>
+								<li><a href="#">Chính sách bảo mật</a></li>
+								<li><a href="#">Chính sách hoàn tiền</a></li>
+								<li><a href="#">Hệ thống thanh toán</a></li>
+								<li><a href="#">Hệ thống vé</a></li>
 							</ul>
 						</div>
 					</div>
 					<div class="col-sm-2">
 						<div class="single-widget">
-							<h2>About Shopper</h2>
+							<h2>Giới thiệu về Shopper</h2>
 							<ul class="nav nav-pills nav-stacked">
-								<li><a href="#">Company Information</a></li>
-								<li><a href="#">Careers</a></li>
-								<li><a href="#">Store Location</a></li>
-								<li><a href="#">Affillate Program</a></li>
-								<li><a href="#">Copyright</a></li>
+								<li><a href="#">Thông tin công ty</a></li>
+								<li><a href="#">Tuyển dụng</a></li>
+								<li><a href="#">Vị trí cửa hàng</a></li>
+								<li><a href="#">Chương trình liên kết</a></li>
+								<li><a href="#">Bản quyền</a></li>
 							</ul>
 						</div>
 					</div>
 					<div class="col-sm-3 col-sm-offset-1">
 						<div class="single-widget">
-							<h2>About Shopper</h2>
+							<h2>Về Cửa hàng</h2>
 							<form action="#" class="searchform">
 								<input type="text" placeholder="Your email address" />
 								<button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
-								<p>Get the most recent updates from <br />our site and be updated your self...</p>
+								<p>Nhận thông tin cập nhật mới nhất từ ​​<br />trang web của chúng tôi và tự cập nhật thông tin cho mình...</p>
 							</form>
 						</div>
 					</div>
@@ -369,8 +369,8 @@
 		<div class="footer-bottom">
 			<div class="container">
 				<div class="row">
-					<p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
-					<p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
+					<p class="pull-left" style="align-items:center;margin-left:500px">Copyright © 2025 TranHuuVuong-EPU</p>
+					
 				</div>
 			</div>
 		</div>

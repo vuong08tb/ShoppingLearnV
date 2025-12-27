@@ -36,7 +36,6 @@ namespace ShoppingLearn.Controllers
 				GrandTotal = cartItems.Sum(x => x.Quantity * x.Price),
 				ShippingCost = shippingPrice,
 				CouponCode = coupon_code
-
 			};
 			return View(cartVM);
 		}
@@ -185,7 +184,7 @@ namespace ShoppingLearn.Controllers
 			var validCoupon = await _datacontext.Coupons
 				.FirstOrDefaultAsync(x => x.Name == coupon_value );
 
-			string couponTitle = validCoupon.Name + " | " + validCoupon?.Description;
+			string couponTitle = validCoupon.Name + " | Giảm " + validCoupon?.Discount + "%";
 
 			if (couponTitle != null)
 			{
