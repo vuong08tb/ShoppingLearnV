@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShoppingLearn.Repository;
 using ShoppingLearn.Models.Chatbot;
+using ShoppingLearn.Models;
 using System.Text.RegularExpressions;
 
 namespace ShoppingLearn.Services.Chatbot
@@ -75,17 +76,16 @@ namespace ShoppingLearn.Services.Chatbot
             {
                 var query = _context.Products.AsQueryable();
 
-                // Filter theo keywords nếu có
+                // Filter theo keywords nếu có (OR logic - match bất kỳ keyword nào)
                 if (intent.Keywords.Any())
                 {
-                    foreach (var keyword in intent.Keywords)
-                    {
-                        var k = keyword.ToLower();
-                        query = query.Where(p =>
+                    var keywordsLower = intent.Keywords.Select(k => k.ToLower()).ToList();
+                    query = query.Where(p =>
+                        keywordsLower.Any(k =>
                             p.Name.ToLower().Contains(k) ||
                             p.Description.ToLower().Contains(k)
-                        );
-                    }
+                        )
+                    );
                 }
 
                 // Filter theo query type
@@ -110,7 +110,7 @@ namespace ShoppingLearn.Services.Chatbot
                         Price = p.Price,
                         Stock = p.Quantity,
                         Description = p.Description,
-                        ImageUrl = p.Image
+                        ImageUrl = !string.IsNullOrEmpty(p.Image) ? $"/media/products/{p.Image}" : "/images/default-product.jpg"
                     })
                     .ToListAsync();
 
@@ -140,7 +140,7 @@ namespace ShoppingLearn.Services.Chatbot
                         Price = p.Price,
                         Stock = p.Quantity,
                         Description = p.Description,
-                        ImageUrl = p.Image
+                        ImageUrl = !string.IsNullOrEmpty(p.Image) ? $"/media/products/{p.Image}" : "/images/default-product.jpg"
                     })
                     .FirstOrDefaultAsync();
 
@@ -213,6 +213,161 @@ namespace ShoppingLearn.Services.Chatbot
                 .ToList();
 
             return words;
+        }
+
+        // AI Recommendation Methods
+        /// <summary>
+        /// Tìm kiếm sản phẩm phù hợp với user preferences
+        /// </summary>
+        public async Task<List<ProductSearchResult>> GetRecommendedProductsAsync(AppUserModel user, List<string> keywords, int maxResults = 5)
+        {
+            try
+            {
+                var query = _context.Products.AsQueryable();
+
+                // Filter theo keywords từ câu hỏi (OR logic - match bất kỳ keyword nào)
+                if (keywords.Any())
+                {
+                    var keywordsLower = keywords.Select(k => k.ToLower()).ToList();
+                    query = query.Where(p =>
+                        keywordsLower.Any(k =>
+                            p.Name.ToLower().Contains(k) ||
+                            p.Description.ToLower().Contains(k)
+                        )
+                    );
+                }
+
+                // Filter theo price range preference
+                if (!string.IsNullOrEmpty(user.PriceRange))
+                {
+                    query = user.PriceRange.ToLower() switch
+                    {
+                        "budget" => query.Where(p => p.Price < 500000),
+                        "medium" => query.Where(p => p.Price >= 500000 && p.Price < 1500000),
+                        "premium" => query.Where(p => p.Price >= 1500000),
+                        _ => query
+                    };
+                }
+
+                // Filter theo style (tìm trong Name hoặc Description)
+                if (!string.IsNullOrEmpty(user.PreferredStyle))
+                {
+                    var style = user.PreferredStyle.ToLower();
+                    query = query.Where(p =>
+                        p.Name.ToLower().Contains(style) ||
+                        p.Description.ToLower().Contains(style)
+                    );
+                }
+
+                // Chỉ lấy sản phẩm còn hàng
+                query = query.Where(p => p.Quantity > 0);
+
+                var products = await query
+                    .Take(maxResults)
+                    .Select(p => new ProductSearchResult
+                    {
+                        ProductId = p.Id,
+                        ProductName = p.Name,
+                        Category = p.CategoryId.ToString(),
+                        Price = p.Price,
+                        Stock = p.Quantity,
+                        Description = p.Description,
+                        ImageUrl = !string.IsNullOrEmpty(p.Image) ? $"/media/products/{p.Image}" : "/images/default-product.jpg"
+                    })
+                    .ToListAsync();
+
+                return products;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error getting recommended products: {ex.Message}");
+                return new List<ProductSearchResult>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy sản phẩm theo category và filters
+        /// </summary>
+        public async Task<List<ProductSearchResult>> GetProductsByCategoryAsync(string category, decimal? minPrice = null, decimal? maxPrice = null, int maxResults = 10)
+        {
+            try
+            {
+                var query = _context.Products.AsQueryable();
+
+                // Filter by category name
+                if (!string.IsNullOrEmpty(category))
+                {
+                    var categoryLower = category.ToLower();
+                    query = query.Where(p => p.Category.Name.ToLower().Contains(categoryLower));
+                }
+
+                // Filter by price range
+                if (minPrice.HasValue)
+                    query = query.Where(p => p.Price >= minPrice.Value);
+
+                if (maxPrice.HasValue)
+                    query = query.Where(p => p.Price <= maxPrice.Value);
+
+                // Only available products
+                query = query.Where(p => p.Quantity > 0);
+
+                var products = await query
+                    .Take(maxResults)
+                    .Select(p => new ProductSearchResult
+                    {
+                        ProductId = p.Id,
+                        ProductName = p.Name,
+                        Category = p.Category.Name,
+                        Price = p.Price,
+                        Stock = p.Quantity,
+                        Description = p.Description,
+                        ImageUrl = !string.IsNullOrEmpty(p.Image) ? $"/media/products/{p.Image}" : "/images/default-product.jpg"
+                    })
+                    .ToListAsync();
+
+                return products;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error getting products by category: {ex.Message}");
+                return new List<ProductSearchResult>();
+            }
+        }
+
+        /// <summary>
+        /// Lấy sản phẩm theo style
+        /// </summary>
+        public async Task<List<ProductSearchResult>> GetProductsByStyleAsync(string style, int maxResults = 10)
+        {
+            try
+            {
+                var styleLower = style.ToLower();
+
+                var products = await _context.Products
+                    .Where(p => p.Quantity > 0 && (
+                        p.Name.ToLower().Contains(styleLower) ||
+                        p.Description.ToLower().Contains(styleLower)
+                    ))
+                    .Take(maxResults)
+                    .Select(p => new ProductSearchResult
+                    {
+                        ProductId = p.Id,
+                        ProductName = p.Name,
+                        Category = p.Category.Name,
+                        Price = p.Price,
+                        Stock = p.Quantity,
+                        Description = p.Description,
+                        ImageUrl = !string.IsNullOrEmpty(p.Image) ? $"/media/products/{p.Image}" : "/images/default-product.jpg"
+                    })
+                    .ToListAsync();
+
+                return products;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error getting products by style: {ex.Message}");
+                return new List<ProductSearchResult>();
+            }
         }
     }
 }

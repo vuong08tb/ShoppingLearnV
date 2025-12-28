@@ -49,29 +49,94 @@ namespace ShoppingLearn.Controllers
 		[HttpPost]
 		public async Task<IActionResult> UpdateInfoAccount(AppUserModel user)
 		{
-
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			//var userEmail = User.FindFirstValue(ClaimTypes.Email);
-			// get user by user email 
 			var userById = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
+
 			if (userById == null)
 			{
 				return NotFound();
 			}
-			
-			else
-			{
-				userById.PhoneNumber = user.PhoneNumber;
-				var passwordHasher = new PasswordHasher<AppUserModel>();
-				var passwordHash = passwordHasher.HashPassword(userById, user.PasswordHash);
 
-				userById.PasswordHash = passwordHash;
-				_dataContext.Update(userById);
-				await _dataContext.SaveChangesAsync();
-				TempData["success"] = "Update Account Information Successfully";
-			}
+			// Update basic info
+			userById.PhoneNumber = user.PhoneNumber;
+
+			// Update AI recommendation preferences
+			userById.Gender = user.Gender;
+			userById.DateOfBirth = user.DateOfBirth;
+			userById.PreferredStyle = user.PreferredStyle;
+			userById.PreferredColors = user.PreferredColors;
+			userById.SizePreference = user.SizePreference;
+			userById.PriceRange = user.PriceRange;
+			userById.Interests = user.Interests;
+
+			_dataContext.Update(userById);
+			await _dataContext.SaveChangesAsync();
+			TempData["success"] = "Cập nhật thông tin tài khoản thành công!";
+
 			return RedirectToAction("UpdateAccount", "Account");
 		}
+
+		// Change Password
+		[HttpGet]
+		public async Task<IActionResult> ChangePassword()
+		{
+			if ((bool)!User.Identity?.IsAuthenticated)
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			return View();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword, string confirmPassword)
+		{
+			if ((bool)!User.Identity?.IsAuthenticated)
+			{
+				return RedirectToAction("Login", "Account");
+			}
+
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var user = await _userManager.FindByIdAsync(userId);
+
+			if (user == null)
+			{
+				return NotFound();
+			}
+
+			// Validate new password and confirm password match
+			if (newPassword != confirmPassword)
+			{
+				TempData["error"] = "Mật khẩu mới và xác nhận mật khẩu không khớp!";
+				return View();
+			}
+
+			// Verify current password
+			var passwordCheck = await _userManager.CheckPasswordAsync(user, currentPassword);
+			if (!passwordCheck)
+			{
+				TempData["error"] = "Mật khẩu hiện tại không chính xác!";
+				return View();
+			}
+
+			// Change password using UserManager
+			var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+
+			if (result.Succeeded)
+			{
+				TempData["success"] = "Đổi mật khẩu thành công!";
+				return RedirectToAction("UpdateAccount", "Account");
+			}
+			else
+			{
+				foreach (var error in result.Errors)
+				{
+					ModelState.AddModelError("", error.Description);
+				}
+				TempData["error"] = "Đổi mật khẩu thất bại. Vui lòng kiểm tra lại!";
+				return View();
+			}
+		}
+
 		public async Task<IActionResult> NewPass(AppUserModel user, string token)
 		{
 			var checkuser = await _userManager.Users

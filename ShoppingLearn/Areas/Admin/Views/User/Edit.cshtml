@@ -30,8 +30,89 @@
             </select>
             <span asp-validation-for="RoleId" class="text-danger" />
         </div>
+
+        <hr />
+        <h5>AI Recommendation Preferences (Optional)</h5>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Giới tính</label>
+                    <select asp-for="Gender" class="form-control">
+                        <option value="">-- Chọn giới tính --</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Ngày sinh</label>
+                    <input asp-for="DateOfBirth" type="date" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Phong cách ưa thích</label>
+                    <select asp-for="PreferredStyle" class="form-control">
+                        <option value="">-- Chọn phong cách --</option>
+                        <option value="Sporty">Sporty</option>
+                        <option value="Casual">Casual</option>
+                        <option value="Formal">Formal</option>
+                        <option value="Street">Street</option>
+                        <option value="Vintage">Vintage</option>
+                        <option value="Minimalist">Minimalist</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Size thường mặc</label>
+                    <select asp-for="SizePreference" class="form-control">
+                        <option value="">-- Chọn size --</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Khoảng giá ưa thích</label>
+                    <select asp-for="PriceRange" class="form-control">
+                        <option value="">-- Chọn khoảng giá --</option>
+                        <option value="Budget">Budget (< 500K)</option>
+                        <option value="Medium">Medium (500K - 1.5M)</option>
+                        <option value="Premium">Premium (> 1.5M)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Màu sắc yêu thích (phân cách bằng dấu phẩy)</label>
+                    <input asp-for="PreferredColors" class="form-control" placeholder="Đỏ, Xanh, Đen" />
+                    <small class="form-text text-muted">Ví dụ: Đỏ, Xanh, Đen</small>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
-            <button class="btn btn-primary ">Update</button>
+            <label>Sở thích (phân cách bằng dấu phẩy)</label>
+            <input asp-for="Interests" class="form-control" placeholder="Thể thao, Công sở, Dạo phố" />
+            <small class="form-text text-muted">Ví dụ: Thể thao, Công sở, Dạo phố</small>
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary">Update</button>
         </div>
     </form>
     <a asp-action="Index"> Back to List User</a>

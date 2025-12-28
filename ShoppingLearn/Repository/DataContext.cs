@@ -22,5 +22,9 @@ namespace ShoppingLearn.Repository
 		public DbSet<StatisticalModel> Statisticals { get; set; }
 		public DbSet<MomoInfoModel> MomoInfos { get; set; }
 		public DbSet<VnpayModel> VnInfos { get; set; }
+
+		// AI Recommendation Chat
+		public DbSet<ChatConversation> ChatConversations { get; set; }
+		public DbSet<ChatMessage> ChatMessages { get; set; }
     }
 }

@@ -2419,3 +2419,77 @@ textarea {
 .contact-info .social-networks ul li a:hover {
   color: #fe980f;
 }
+
+/*************************
+*****Account Dropdown****
+**************************/
+.shop-menu .dropdown {
+  position: relative;
+}
+
+.shop-menu .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  min-width: 220px;
+  padding: 10px 0;
+  margin-top: 8px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  z-index: 1000;
+}
+
+.shop-menu .dropdown-menu li {
+  display: block;
+  padding: 0;
+  width: 100%;
+}
+
+.shop-menu .dropdown-menu li a {
+  display: block;
+  padding: 10px 20px;
+  margin-top: 0 !important;
+  color: #696763;
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+  clear: both;
+  transition: all 0.3s ease;
+}
+
+.shop-menu .dropdown-menu li a i {
+  margin-right: 10px;
+  font-size: 15px;
+  width: 20px;
+  text-align: center;
+  display: inline-block;
+  color: inherit;
+  vertical-align: middle;
+}
+
+.shop-menu .dropdown-menu li a:hover,
+.shop-menu .dropdown-menu li a:focus {
+  background-color: #fe980f;
+  color: #ffffff !important;
+  text-decoration: none;
+}
+
+.shop-menu .dropdown > a .caret {
+  margin-left: 5px;
+  border-top-color: #696763;
+  border-width: 5px;
+}
+
+.shop-menu .dropdown > a:hover .caret {
+  border-top-color: #fe980f;
+}
+
+.shop-menu .dropdown.open > a,
+.shop-menu .dropdown.open > a:hover,
+.shop-menu .dropdown.open > a:focus {
+  background-color: transparent;
+  color: #fe980f;
+}

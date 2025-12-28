@@ -35,6 +35,10 @@ builder.Services.AddScoped<IChromaService, ChromaService>();
 builder.Services.AddScoped<ISqlQueryService, SqlQueryService>();
 builder.Services.AddScoped<IChatbotService, ChatbotService>();
 
+// Đăng ký AI Recommendation Services
+builder.Services.AddScoped<IChatHistoryService, ChatHistoryService>();
+builder.Services.AddScoped<IProductRecommendationService, ProductRecommendationService>();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

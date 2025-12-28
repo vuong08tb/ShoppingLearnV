@@ -1,4 +1,5 @@
 using ShoppingLearn.Models.Chatbot;
+using ShoppingLearn.Models;
 
 namespace ShoppingLearn.Services.Chatbot
 {
@@ -40,6 +41,26 @@ namespace ShoppingLearn.Services.Chatbot
         /// <param name="products">Danh sách sản phẩm</param>
         /// <returns>Chuỗi text đã format</returns>
         string FormatProductResults(List<ProductSearchResult> products);
+
+        // AI Recommendation methods
+        /// <summary>
+        /// Tìm kiếm sản phẩm phù hợp với user preferences
+        /// </summary>
+        /// <param name="user">Thông tin user với preferences</param>
+        /// <param name="keywords">Keywords từ câu hỏi</param>
+        /// <param name="maxResults">Số lượng sản phẩm tối đa</param>
+        /// <returns>Danh sách sản phẩm gợi ý</returns>
+        Task<List<ProductSearchResult>> GetRecommendedProductsAsync(AppUserModel user, List<string> keywords, int maxResults = 5);
+
+        /// <summary>
+        /// Lấy sản phẩm theo category và filters
+        /// </summary>
+        Task<List<ProductSearchResult>> GetProductsByCategoryAsync(string category, decimal? minPrice = null, decimal? maxPrice = null, int maxResults = 10);
+
+        /// <summary>
+        /// Lấy sản phẩm theo style
+        /// </summary>
+        Task<List<ProductSearchResult>> GetProductsByStyleAsync(string style, int maxResults = 10);
     }
 
     /// <summary>

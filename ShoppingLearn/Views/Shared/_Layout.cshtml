@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <title>Home| Fashion's Men HV </title>
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="~/css/prettyPhoto.css" rel="stylesheet">
     <link href="~/css/price-range.css" rel="stylesheet">
     <link href="~/css/animate.css" rel="stylesheet">
@@ -88,18 +88,20 @@
 					<div class="col-sm-8">
 						<div class="shop-menu pull-right">
 							<ul class="nav navbar-nav">
-								
+
 								<li><a asp-action="Index" asp-controller="Cart"><i class="fa fa-shopping-cart"></i> Cart</a></li>
 								@if(User.Identity?.IsAuthenticated ?? false)
 								{
+									<li><a asp-action="Index" asp-controller="AIRecommendation"><i class="fa fa-magic"></i> AI Gợi ý</a></li>
 									<li><a asp-controller="Account" asp-action="Logout"><i class="fa fa-lock"></i> Hi,@User.Identity.Name Logout</a></li>
 									<li class="dropdown">
-										<a style="cursor:pointer" class="dropdown-toggle" data-toggle="dropdown" >
-											<i class="fa fa-user"></i> Account  <span class="caret"></span>
+										<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="fa fa-user"></i> Account <span class="caret"></span>
 										</a>
 										<ul class="dropdown-menu">
-											<li><a asp-action="History" asp-controller="Account">History Orders</a></li>
-											<li><a asp-action="UpdateAccount" asp-controller="Account">Update Account Info</a></li>
+											<li><a asp-action="History" asp-controller="Account"><i class="fa fa-history"></i> Lịch sử đơn hàng</a></li>
+											<li><a asp-action="UpdateAccount" asp-controller="Account"><i class="fa fa-edit"></i> Cập nhật thông tin</a></li>
+											<li><a asp-action="ChangePassword" asp-controller="Account"><i class="fa fa-key"></i> Đổi mật khẩu</a></li>
 										</ul>
 									</li>
 									<li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
