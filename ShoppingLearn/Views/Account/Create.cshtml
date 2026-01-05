@@ -1,42 +1,123 @@
-﻿@model UserModel
+﻿<html>
+	<style>
+		.login-section {
+    min-height: 100vh;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    width: 150%;
+    max-width: 400px;
+    background: #ede6e6;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+#slider {
+        display: none
+    }
+.login-card .title {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.form-control {
+    height: 45px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: none;
+}
+
+.btn-primary {
+    height: 45px;
+    border-radius: 8px;
+    background: #667eea;
+    border: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: #5a67d8;
+}
+
+.login-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.login-links a {
+    font-size: 14px;
+    color: #667eea;
+    text-decoration: none;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}
+
+	</style>
+</html>
+@model UserModel
 @{
 	ViewData["Title"] = "Resigter User";
 }
-<section id="">
-	<!--form-->
-	<div class="container">
-		<div class="row">
-			<div class="col-sm-8 col-sm-offset-1">
-				<div class="signup-form">
-					<!--sign up form-->
-					<h2>Đăng ký</h2>
-					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-					<form asp-action="Create" asp-controller="Account">
+<section id="register" class="login-section">
+    <div class="container-2">
+        <div class="login-card">
+            <h2 class="title">Đăng ký</h2>
 
-						<div class="form-group">
-							<label> UserName</label>
-							<input asp-for="Username" class="form-control" />
-							<span asp-validation-for="Username" class="text-danger" />
-						</div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-						<div class="form-group">
-							<label> Email</label>
-							<input asp-for="Email" class="form-control" />
-							<span asp-validation-for="Email" class="text-danger" />
-						</div>
-						<div class="form-group">
-							<label> Password</label>
-							<input asp-for="Password" class="form-control" />
-							<span asp-validation-for="Password" class="text-danger" />
-						</div>
+            <form asp-action="Create" asp-controller="Account">
 
-						<button class="btn btn-default">Đăng ký </button>
-					</form>
-				</div><!--/sign up form-->
-			</div>
-		</div>
-	</div>
-</section><!--/form-->
+                <div class="form-group">
+                    <label>Tên đăng nhập</label>
+                    <input asp-for="Username" class="form-control" placeholder="Nhập username" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="example@gmail.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Tạo tài khoản
+                </button>
+
+                <div class="login-links text-center">
+                    <a asp-action="Login" asp-controller="Account">
+                        Đã có tài khoản? Đăng nhập
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
 @section Scripts {
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");

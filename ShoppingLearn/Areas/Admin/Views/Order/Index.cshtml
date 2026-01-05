@@ -1,66 +1,222 @@
 ﻿@model IEnumerable<OrderModel>
 @{
-    ViewData["title"] = " Listed Order";
+    ViewData["title"] = "Quản lý đơn hàng";
 }
-<h3> List Order</h3>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Order Code</th>
-            <th>Shipping Cost</th>
-            <th>Coupon Code</th>
-            <th>UserName</th>
-            <th>Order Status</th>
-            <th>Payment Method</th>
-            <th>Create Date</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Id</td>
-                <td>@item.Order_code</td>
-                <td>@item.ShippingCost.ToString("#,##0 VNĐ")</td>
-                <td>@item.CouponCode</td>
-                <td>@item.UserName</td>
-            @*     <td></td> *@
-                <td>
-                    @if(item.Status == 1)
-                    {
-                    <span class="text text-success">Đơn hàng mới</span>
-                    }
-                    else if (item.Status == 2)
-                    {
-                        <span class="text text-primary">Đã xử lý</span>
-                    }
-                    else
-                    {
-                        <span class="text text-danger">Đã hủy</span>
-                    }
-                </td>
-                <td>
-                    @if(item.PaymentMethod == "COD" )
-                    {
-                        <span class="text text-primary"> @item.PaymentMethod</span>
-                    }
-                    else if (item.PaymentMethod != "COD")
-                    {
-                        <span class="text text-success">  @item.PaymentMethod</span>
-                    }
-                </td>
-                <td>@item.CreatedDate</td>
-                <td></td>
-                <td>
-                    <a class="btn btn-warning btn-sm" asp-action="ViewOrder" asp-controller="Order" asp-route-ordercode="@item.Order_code">View Order</a>
-                    <a class="btn btn-danger btn-sm " asp-action="Delete" asp-controller="Order" asp-route-ordercode="@item.Order_code">Delete</a>
-                </td>
-            </tr>
-        }
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
+<style>
+    html {
+        font-size: 16px;
+    }
+    /* Tổng thể */
+    body {
+        font-family: 'Nunito', sans-serif;
+        background-color: #f3f5f9;
+        color: #444;
+    }
 
-    </tbody>
-</table>
+    .order-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        padding: 30px;
+        margin-top: 20px;
+        border: none;
+        border-top: 5px solid #4e73df; /* Màu xanh dương chủ đạo cho Order */
+    }
+
+    .header-title {
+        font-weight: 800;
+        color: #2c3e50;
+        font-size: 1.5rem;
+        letter-spacing: -0.5px;
+        margin: 0;
+    }
+
+    /* Table Styles */
+    .table-custom {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 12px;
+    }
+
+    .table-custom thead th {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        color: #8898aa;
+        padding: 15px;
+        border: none;
+        white-space: nowrap;
+    }
+
+    .table-custom tbody tr {
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        transition: all 0.2s ease;
+    }
+
+    .table-custom tbody tr:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+
+    .table-custom td {
+        padding: 15px;
+        vertical-align: middle;
+        border: none;
+        font-size: 0.9rem;
+    }
+    
+    .table-custom tbody tr td:first-child { border-radius: 12px 0 0 12px; }
+    .table-custom tbody tr td:last-child { border-radius: 0 12px 12px 0; }
+
+    /* Custom Badges */
+    .badge-soft {
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    
+    .badge-soft-success { background-color: #e6fffa; color: #20c997; } /* Đơn mới */
+    .badge-soft-primary { background-color: #e8f0fe; color: #4e73df; } /* Đã xử lý */
+    .badge-soft-danger { background-color: #ffebee; color: #e74a3b; } /* Hủy */
+    .badge-soft-warning { background-color: #fff8e1; color: #f6c23e; } /* COD */
+    .badge-soft-info { background-color: #e0f7fa; color: #36b9cc; } /* Online Pay */
+
+    /* Order Code Styling */
+    .order-code {
+        font-family: 'Consolas', monospace;
+        font-weight: 700;
+        color: #4e73df;
+        background: #f0f2f5;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    /* Action Buttons */
+    .btn-action-group {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+    
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: 0.2s;
+        border: none;
+        text-decoration: none;
+    }
+
+    .btn-view { background-color: #e8f0fe; color: #4e73df; }
+    .btn-view:hover { background-color: #4e73df; color: #fff; }
+
+    .btn-delete { background-color: #ffebee; color: #e74a3b; }
+    .btn-delete:hover { background-color: #e74a3b; color: #fff; }
+
+</style>
+
+<div class="container-fluid">
+    <div class="order-card">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <h3 class="header-title">
+                <i class="fas fa-clipboard-list me-2 text-primary"></i> Danh sách đơn hàng
+            </h3>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th class="text-center">#ID</th>
+                        <th>Mã đơn hàng</th>
+                        <th>Ngày tạo</th>
+                        <th>Khách hàng</th>
+                        <th>Vận chuyển</th>
+                        <th class="text-center">Thanh toán</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center text-muted fw-bold">@item.Id</td>
+                            
+                            <td>
+                                <span class="order-code">#@item.Order_code</span>
+                            </td>
+                            
+                            <td>
+                                <i class="far fa-calendar-alt me-1 text-muted small"></i>
+                                @item.CreatedDate.ToString("dd/MM/yyyy")
+                            </td>
+
+                            <td>
+                                <span class="fw-bold text-dark">@item.UserName</span>
+                            </td>
+
+                            <td class="fw-bold text-success">
+                                @item.ShippingCost.ToString("#,##0 VNĐ")
+                            </td>
+
+                            <td class="text-center">
+                                @if(item.PaymentMethod == "COD")
+                                {
+                                    <span class="badge-soft badge-soft-warning">
+                                        <i class="fas fa-money-bill-wave me-1"></i> COD
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge-soft badge-soft-info">
+                                        <i class="fas fa-credit-card me-1"></i> @item.PaymentMethod
+                                    </span>
+                                }
+                            </td>
+
+                            <td class="text-center">
+                                @if(item.Status == 1)
+                                {
+                                    <span class="badge-soft badge-soft-success">Đơn hàng mới</span>
+                                }
+                                else if (item.Status == 2)
+                                {
+                                    <span class="badge-soft badge-soft-primary">Đã xử lý</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-soft badge-soft-danger">Đã hủy</span>
+                                }
+                            </td>
+
+                            <td>
+                                <div class="btn-action-group">
+                                    <a class="btn-icon btn-view" asp-action="ViewOrder" asp-controller="Order" asp-route-ordercode="@item.Order_code" title="Xem chi tiết">
+                                        <i class="fas fa-eye small"></i>
+                                    </a>
+                                    
+                                    <a class="btn-icon btn-delete confirmDeletion" asp-action="Delete" asp-controller="Order" asp-route-ordercode="@item.Order_code" title="Xóa đơn hàng">
+                                        <i class="fas fa-trash-alt small"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

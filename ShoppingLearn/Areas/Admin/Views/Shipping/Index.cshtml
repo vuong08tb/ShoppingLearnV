@@ -2,130 +2,285 @@
 @{
     ViewData["title"] = "Create Shipping";
 }
-<style type="text/css">
-    .css_select_div {
-        text-align: center;
+
+<style>
+    /* Tổng thể */
+    body {
+        background-color: #f8f9fc; /* Nền xám nhẹ làm nổi bật nội dung */
+        color: #5a5c69;
     }
 
-    .css_select {
-        display: inline-table;
-        width: 25%;
-        padding: 5px;
-        margin: 5px 2%;
-        border: solid 1px #686868;
-        border-radius: 5px;
+    /* 1. Card Container chung */
+    .shipping-card {
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        padding: 30px;
+        margin-bottom: 30px;
+        border: none;
+    }
+
+    .card-header-custom {
+        border-bottom: 2px solid #f1f3f9;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+        font-weight: 700;
+        color: #4e73df;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* 2. Form Styling */
+    .form-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #444;
+        margin-bottom: 8px;
+    }
+
+    .custom-select, .form-control {
+        border-radius: 10px;
+        border: 1px solid #d1d3e2;
+        padding: 12px 15px;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+        width: 100%;
+        background-color: #fdfdfd;
+    }
+
+    .custom-select:focus, .form-control:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        outline: none;
+    }
+
+    /* 3. Button Styling */
+    .btn-create-shipping {
+        background: linear-gradient(45deg, #4e73df, #224abe);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 12px 30px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3);
+        transition: transform 0.2s;
+        width: 100%; /* Nút full chiều ngang trên mobile */
+    }
+
+    .btn-create-shipping:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(78, 115, 223, 0.4);
+        color: white;
+    }
+
+    /* 4. Table Styling */
+    .table-custom {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    .table-custom thead th {
+        background-color: transparent;
+        color: #858796;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        padding: 15px;
+        border: none;
+        border-bottom: 2px solid #e3e6f0;
+    }
+
+    .table-custom tbody tr {
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        transition: transform 0.2s;
+    }
+
+    .table-custom tbody tr:hover {
+        transform: scale(1.01);
+        box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+        background-color: #fff;
+    }
+
+    .table-custom td {
+        padding: 15px;
+        vertical-align: middle;
+        border: none;
+    }
+    
+    /* Bo tròn góc cho hàng đầu và cuối */
+    .table-custom tbody tr td:first-child { border-radius: 10px 0 0 10px; }
+    .table-custom tbody tr td:last-child { border-radius: 0 10px 10px 0; }
+
+    /* Button Delete */
+    .btn-delete-custom {
+        background-color: #fff;
+        color: #e74a3b;
+        border: 1px solid #e74a3b;
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-delete-custom:hover {
+        background-color: #e74a3b;
+        color: white;
+    }
+    
+    /* Layout Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
     }
 </style>
-<h4> Create Shipping</h4>
-<div class="col-md-9">
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="shipping-card">
+                <h4 class="card-header-custom"><i class="fas fa-truck-moving me-2"></i> Thiết lập vận chuyển</h4>
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                
+                <form>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Tỉnh / Thành phố</label>
+                            <select class="custom-select" id="tinh" name="tinh">
+                                <option value="0">-- Chọn Tỉnh Thành --</option>
+                            </select>
+                        </div>
 
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-        <label> Tỉnh thành phố</label>
-            <select class="css_select" id="tinh" name="tinh" title="Chọn Tỉnh Thành">
-                <option value="0">Tỉnh Thành</option>
-            </select>
-        </div>
-        <div class="form-group">
-        <label> Quận huyện</label>
-            <select class="css_select" id="quan" name="quan" title="Chọn Quận Huyện">
-                <option value="0">Quận Huyện</option>
-            </select>
-        </div>
-        <div class="form-group">
-        <label> Phường Xã</label>
-            <select class="css_select" id="phuong" name="phuong" title="Chọn Phường Xã">
-                <option value="0">Phường Xã</option>
-            </select>
-        </div>
-          <div class="form-group">
-            <label>Giá</label>
-            <input asp-for="Price" id="price-shipping" class="form-control"/>
-           @*     <input id="price-shipping" type="number" placeholder="vd: 20000" min="1" class="form-control" /> *@
-            
-        </div>
-        <div class="form-group">
-            <button type="button" class="btn btn-primary btn-add-shipping ">Create</button>
-        </div>
-     
-        
-    <h2>Shipping List</h2>
+                        <div class="form-group">
+                            <label class="form-label">Quận / Huyện</label>
+                            <select class="custom-select" id="quan" name="quan">
+                                <option value="0">-- Chọn Quận Huyện --</option>
+                            </select>
+                        </div>
 
-    <table class="table table-striped" id="myTable">
-        <thead>
-            <tr>
-                <th>City</th>
-                <th>District</th>
-                <th>Ward</th>
-                <th>Price</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var shipping in ViewBag.Shippings)
-            {
-                <tr>
-                    <td>@shipping.City</td>
-                    <td>@shipping.District</td>
-                    <td>@shipping.Ward</td>
-                    <td>@shipping.Price.ToString("#,##0 VNĐ")</td>
-                    <td>
-                       
-                        <a onclick="return confirm('Có muốn xóa không?')" href="@Url.Action("Delete", "Shipping", new { id = shipping.Id })" class="btn btn-danger">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        <div class="form-group">
+                            <label class="form-label">Phường / Xã</label>
+                            <select class="custom-select" id="phuong" name="phuong">
+                                <option value="0">-- Chọn Phường Xã --</option>
+                            </select>
+                        </div>
 
-    <a asp-action="Index" asp-controller="Shipping"> Back to List Shipping</a>
+                        <div class="form-group">
+                            <label class="form-label">Phí vận chuyển (VNĐ)</label>
+                            <input asp-for="Price" id="price-shipping" class="form-control" type="number" placeholder="Nhập giá tiền..." />
+                        </div>
+                    </div>
 
+                    <div class="mt-4 text-end">
+                        <button type="button" class="btn btn-create-shipping btn-add-shipping">
+                            <i class="fas fa-plus-circle me-2"></i> Thêm vận chuyển
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="shipping-card">
+                <h4 class="card-header-custom" style="color: #1cc88a;"><i class="fas fa-list-ul me-2"></i> Danh sách phí vận chuyển</h4>
+                
+                <table class="table-custom" id="myTable">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-city me-1"></i> Tỉnh/Thành</th>
+                            <th><i class="fas fa-map-marker-alt me-1"></i> Quận/Huyện</th>
+                            <th><i class="fas fa-map-pin me-1"></i> Phường/Xã</th>
+                            <th><i class="fas fa-dollar-sign me-1"></i> Giá cước</th>
+                            <th class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.Shippings != null)
+                        {
+                            @foreach (var shipping in ViewBag.Shippings)
+                            {
+                                <tr>
+                                    <td><b>@shipping.City</b></td>
+                                    <td>@shipping.District</td>
+                                    <td>@shipping.Ward</td>
+                                    <td class="text-success fw-bold">@shipping.Price.ToString("#,##0 VNĐ")</td>
+                                    <td class="text-center">
+                                        <a onclick="return confirm('Bạn có chắc chắn muốn xóa phí vận chuyển này không?')" 
+                                           href="@Url.Action("Delete", "Shipping", new { id = shipping.Id })" 
+                                           class="btn-delete-custom">
+                                            <i class="fas fa-trash-alt"></i> Xóa
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                
+                <div class="mt-3">
+                    <a asp-action="Index" asp-controller="Shipping" class="text-decoration-none text-muted small">
+                        <i class="fas fa-sync-alt"></i> Tải lại danh sách
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-     <script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <script>
         $(".btn-add-shipping").click(function(){
             var tinh = $("#tinh").find('option:selected').text();
             var quan = $("#quan").find('option:selected').text();
             var phuong = $("#phuong").find('option:selected').text();
-
             var price = $("#price-shipping").val();
-            // alert(tinh);
-            // alert(quan);
-            // alert(phuong);
-            // alert(price);
+
             if (tinh == '' || quan == '' || phuong == '' || price == '') {
-                Swal.fire("Làm ơn ko bỏ trống.");
-            }else{
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Thiếu thông tin',
+                    text: 'Vui lòng không bỏ trống các trường!'
+                });
+            } else {
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("StoreShipping", "Shipping")",
-                    data: { tinh: tinh, quan: quan, phuong: phuong, price: price }, // Send data to the server
-
+                    data: { tinh: tinh, quan: quan, phuong: phuong, price: price },
                     success: function (result) {
-                        // Handle successful 
                         if (result.success) {
-
-                            Swal.fire("Thêm vận chuyển thành công. Load lại page để thấy data.");
-                           // location.reload();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Đã thêm phí vận chuyển mới!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
                         } else if (result.duplicate) {
-
-                            Swal.fire("Dữ liệu trùng lặp.");
-
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi trùng lặp',
+                                text: 'Dữ liệu vận chuyển này đã tồn tại!'
+                            });
                         }
                     }
-
                 });
             }
-            
+        });
 
-        })
- 
+        // Giữ nguyên logic lấy API Tỉnh thành
         $(document).ready(function () {
-            //Lấy tỉnh thành
             $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function (data_tinh) {
                 if (data_tinh.error == 0) {
                     $.each(data_tinh.data, function (key_tinh, val_tinh) {
@@ -133,7 +288,6 @@
                     });
                     $("#tinh").change(function (e) {
                         var idtinh = $(this).val();
-                        //Lấy quận huyện
                         $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function (data_quan) {
                             if (data_quan.error == 0) {
                                 $("#quan").html('<option value="0">Quận Huyện</option>');
@@ -141,7 +295,6 @@
                                 $.each(data_quan.data, function (key_quan, val_quan) {
                                     $("#quan").append('<option value="' + val_quan.id + '">' + val_quan.full_name + '</option>');
                                 });
-                                //Lấy phường xã
                                 $("#quan").change(function (e) {
                                     var idquan = $(this).val();
                                     $.getJSON('https://esgoo.net/api-tinhthanh/3/' + idquan + '.htm', function (data_phuong) {
@@ -153,11 +306,9 @@
                                         }
                                     });
                                 });
-
                             }
                         });
                     });
-
                 }
             });
         });

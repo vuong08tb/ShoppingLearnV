@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.ComponentModel.Design
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -15,6 +16,7 @@
 	<link href="~/css/responsive.css" rel="stylesheet">
 	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+	<link href=""stylesheet">
     <!--[if lt IE 9]>
     <script src="~/js/html5shiv.js"></script>
     <script src="~/js/respond.min.js"></script>
@@ -54,75 +56,12 @@
 			</div>
 		</div><!--/header_top-->
 		 *@
-		<div class="header-middle"><!--header-middle-->
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-4">
-						<div class="logo pull-left">
-							<a href="index.html"><img src="images/home/logo.png" alt="" /></a>
-						</div>
-				@* 		<div class="btn-group pull-right">
-							<div class="btn-group">
-								<button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-									USA
-									<span class="caret"></span>
-								</button>
-								@* <ul class="dropdown-menu">
-									<li><a href="#">Canada</a></li>
-									<li><a href="#">UK</a></li>
-								</ul>
-							</div> *@
-							
-					@* 		<div class="btn-group">
-								<button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-									DOLLAR
-									<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu">
-									<li><a href="#">Canadian Dollar</a></li>
-									<li><a href="#">Pound</a></li>
-								</ul>
-							</div>
-						</div>  *@
-					</div>
-					<div class="col-sm-8">
-						<div class="shop-menu pull-right">
-							<ul class="nav navbar-nav">
-
-								<li><a asp-action="Index" asp-controller="Cart"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-								@if(User.Identity?.IsAuthenticated ?? false)
-								{
-									<li><a asp-action="Index" asp-controller="AIRecommendation"><i class="fa fa-magic"></i> AI Gợi ý</a></li>
-									<li><a asp-controller="Account" asp-action="Logout"><i class="fa fa-lock"></i> Hi,@User.Identity.Name Logout</a></li>
-									<li class="dropdown">
-										<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-											<i class="fa fa-user"></i> Account <span class="caret"></span>
-										</a>
-										<ul class="dropdown-menu">
-											<li><a asp-action="History" asp-controller="Account"><i class="fa fa-history"></i> Lịch sử đơn hàng</a></li>
-											<li><a asp-action="UpdateAccount" asp-controller="Account"><i class="fa fa-edit"></i> Cập nhật thông tin</a></li>
-											<li><a asp-action="ChangePassword" asp-controller="Account"><i class="fa fa-key"></i> Đổi mật khẩu</a></li>
-										</ul>
-									</li>
-									<li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-									<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-								}
-								else
-								{
-									<li><a asp-controller="Account" asp-action="Login" ><i class="fa fa-lock"></i>  Login</a></li>
-								}
-
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div><!--/header-middle-->
+		 
 	
 		<div class="header-bottom"><!--header-bottom-->
 			<div class="container">
 				<div class="row">
-					<div class="col-sm-9">
+					<div class="col-sm-5">
 						<div class="navbar-header">
 							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 								<span class="sr-only">Toggle navigation</span>
@@ -150,22 +89,91 @@
 										<li><a href="blog-single.html">Blog Single</a></li>
                                     </ul>
                                 </li> 
-								 <li><a href="404.html">404</a></li>
 								<li><a href="contact-us.html">Contact</a></li>
 							</ul>
 						</div>
 					</div>
-					<div class="col-sm-3">
+					<div class="col-sm-4"
 						<form asp-controller="Product" asp-action="Search" method="post">
 						<div class="search_box pull-right">
 							<input type="text" placeholder="Search" name="searchTerm"/>
-							<button class="btn btn-warning" type="submit">Search </button>
+							<button class="btn btn-warning" type="submit"><i class="fa fa-search"></i></button>
 						</div>
 
 
 						</form>
 						
 					</div>
+					<div class="col-sm-3">
+    <div class="shop-menu pull-right">
+        <ul class="nav navbar-nav">
+
+            <!-- Cart -->
+            <li class="cart-icon">
+                <a asp-action="Index" asp-controller="Cart">
+                    <i class="fa fa-shopping-cart"></i> Cart
+                </a>
+            </li>
+
+            @if (User.Identity?.IsAuthenticated ?? false)
+            {
+                <!-- USER DROPDOWN -->
+                <li class="dropdown login-icon">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-user"></i>
+                        Hi, @User.Identity.Name
+                        <span class="caret"></span>
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a asp-action="Index" asp-controller="AIRecommendation">
+                                <i class="fa fa-magic"></i> AI Gợi ý
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-action="History" asp-controller="Account">
+                                <i class="fa fa-history"></i> Lịch sử đơn hàng
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-action="UpdateAccount" asp-controller="Account">
+                                <i class="fa fa-edit"></i> Cập nhật thông tin
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-action="ChangePassword" asp-controller="Account">
+                                <i class="fa fa-key"></i> Đổi mật khẩu
+                            </a>
+                        </li>
+
+                        <li role="separator" class="divider"></li>
+
+                        <li>
+                            <a asp-controller="Account" asp-action="Logout">
+                                <i class="fa fa-lock"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            }
+            else
+            {
+                <!-- LOGIN -->
+                <li class="login-icon">
+                    <a asp-controller="Account" asp-action="Login">
+                        <i class="fa fa-user"></i> Login
+                    </a>
+                </li>
+            }
+
+        </ul>
+    </div>
+</div>
+
 				</div>
 			</div>
 		</div><!--/header-bottom-->
