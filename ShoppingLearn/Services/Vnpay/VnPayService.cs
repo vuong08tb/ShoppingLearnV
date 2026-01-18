@@ -14,6 +14,17 @@ namespace ShoppingLearn.Services.Vnpay
 		}
 		public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context)
 		{
+			Console.WriteLine("===== PAYMENT MODEL =====");
+			Console.WriteLine(
+				System.Text.Json.JsonSerializer.Serialize(
+					model,
+					new System.Text.Json.JsonSerializerOptions
+					{
+						WriteIndented = true
+					}
+				)
+			);
+    		Console.WriteLine("=========================");
 			var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
 			var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
 			var tick = DateTime.Now.Ticks.ToString();

@@ -1,118 +1,282 @@
 ﻿@model CouponModel
 @{
-    ViewData["title"] = " Create Coupon";
+    ViewData["title"] = "Create Coupon";
 }
-<h4> Create Coupon</h4>
-<div class="col-md-9">
 
-    <form asp-action="Create" autocomplete="off" asp-controller="Coupon" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label> Name</label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger" />
-        </div>
-        <div class="form-group">
-            <label> Discount</label>
-            <input asp-for="Discount" class="form-control" type="number" step="0.01" min="1" max="100" />
-            <span asp-validation-for="Discount" class="text-danger" />
-        </div>
-        <div class="form-group">
-            <label> Description</label>
-            <textarea asp-for="Description" class="form-control"></textarea>
-            <span asp-validation-for="Description" class="text-danger" />
-        </div>
-        <div class="form-group">
-            <label> DateStart</label>
-            <input asp-for="DateStart" class="form-control" />
-            <span asp-validation-for="DateStart" class="text-danger" />
-        </div>
-        <div class="form-group">
-            <label> DateExpired </label>
-            <input asp-for="DateExpried" class="form-control" />
-            <span asp-validation-for="DateExpried" class="text-danger" />
-        </div>
+<style>
+    html {
+        font-size: 16px;
+    }
+    /* 1. Cấu trúc nền và Card */
+    body {
+        background-color: #f8f9fc;
+        color: #5a5c69;
+        font-family: 'Segoe UI', sans-serif;
+    }
 
-        <div class="form-group">
-            <label> Status</label>
-            <select asp-for="Status" class="form-control">
-                <option value="1"> Hiển thị</option>
-                <option value="0">Ẩn</option>
-            </select>
-            <span asp-validation-for="Status" class="text-danger" />
-        </div>
-        <div class="form-group">
-            <button class="btn btn-primary ">Create</button>
-        </div>
-    </form>
+    .coupon-card {
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        padding: 30px;
+        margin-bottom: 30px;
+        border: none;
+    }
 
-    <h5> List Coupons</h5>
-    <table class="table table-striped" id="myTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Date Started</th>
-                <th>Date Expired</th>
-                <th>Discount</th>
-                <th>Active</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var coupon in ViewBag.Coupons)
-            {
-                <tr>
-                    <td>@coupon.Name</td>
-                    <td>@coupon.Description</td>
-                    <td>@coupon.DateStart.ToString("dd-MM-yyyy")</td>
-                    <td>@coupon.DateExpried.ToString("dd-MM-yyyy")</td>
-                    <td>@coupon.Discount</td>
-                    <td>
-                        @if (@coupon.Status == 1)
-                        {
-                            <select name="Status">
-                                <option selected value="1">Kích hoạt</option>
+    .card-header-custom {
+        border-bottom: 2px solid #f1f3f9;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+        font-weight: 700;
+        color: #4e73df; /* Màu xanh chủ đạo */
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+    }
+
+    /* 2. Form Styling */
+    .form-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #444;
+        margin-bottom: 8px;
+    }
+
+    .form-control, .custom-select {
+        border-radius: 10px;
+        border: 1px solid #d1d3e2;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+
+    /* Nút Create */
+    .btn-create-coupon {
+        background: linear-gradient(45deg, #4e73df, #224abe);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 10px 30px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3);
+        transition: transform 0.2s;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .btn-create-coupon:hover {
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    /* 3. Table Styling */
+    .table-custom {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    .table-custom thead th {
+        background-color: transparent;
+        color: #858796;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        padding: 15px;
+        border-bottom: 2px solid #e3e6f0;
+        white-space: nowrap;
+    }
+
+    .table-custom tbody tr {
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        transition: transform 0.2s;
+    }
+
+    .table-custom tbody tr:hover {
+        transform: scale(1.005);
+        box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+    }
+
+    .table-custom td {
+        padding: 15px;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    .table-custom tbody tr td:first-child { border-radius: 10px 0 0 10px; }
+    .table-custom tbody tr td:last-child { border-radius: 0 10px 10px 0; }
+
+    /* Badges cho trạng thái */
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: inline-block;
+    }
+    .bg-expired { background-color: #ffebee; color: #c62828; }
+    .bg-active { background-color: #e8f5e9; color: #2e7d32; }
+    .bg-today { background-color: #fff3e0; color: #ef6c00; }
+
+    /* Select mini trong bảng */
+    .mini-select {
+        border: 1px solid #e3e6f0;
+        border-radius: 15px;
+        padding: 4px 8px;
+        font-size: 0.8rem;
+        outline: none;
+        background: #f8f9fc;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="container-fluid">
+    <div class="row">
+        
+        <div class="col-md-12 col-lg-4">
+            <div class="coupon-card">
+                <div class="card-header-custom">
+                    <i class="fas fa-plus-circle me-2"></i> Tạo mã giảm giá
+                </div>
+                
+                <form asp-action="Create" autocomplete="off" asp-controller="Coupon" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <div class="form-group mb-3">
+                        <label class="form-label">Tên mã (Name)</label>
+                        <input asp-for="Name" class="form-control" placeholder="Ví dụ: SALE50..." />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Mô tả (Description)</label>
+                        <textarea asp-for="Description" class="form-control" rows="2" placeholder="Mô tả ngắn gọn..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Giảm giá (%)</label>
+                            <input asp-for="Discount" class="form-control" type="number" step="0.01" min="1" max="100" />
+                            <span asp-validation-for="Discount" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Trạng thái</label>
+                            <select asp-for="Status" class="form-control">
+                                <option value="1">Hiển thị</option>
                                 <option value="0">Ẩn</option>
                             </select>
-                        }
-                        else
-                        {
-                            <select name="Status">
-                                <option value="1">Kích hoạt</option>
-                                <option selected value="0">Ẩn</option>
-                            </select>
-                        }
+                        </div>
+                    </div>
 
-                    </td>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Ngày bắt đầu</label>
+                            <input asp-for="DateStart" class="form-control" type="date" /> <span asp-validation-for="DateStart" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Ngày kết thúc</label>
+                            <input asp-for="DateExpried" class="form-control" type="date" /> <span asp-validation-for="DateExpried" class="text-danger small"></span>
+                        </div>
+                    </div>
 
-                    <td>
-                        @if (coupon.DateExpried < DateTime.Now)
-                        {
-                            <span class="text text-danger">Expired</span>
-                        }
-                        else
-                        {
-                            TimeSpan remainingTime = coupon.DateExpried - DateTime.Now;
-                            int daysRemaining = remainingTime.Days;
-                            @if (daysRemaining == 0)
+                    <div class="form-group mt-3">
+                        <button class="btn btn-create-coupon">
+                            <i class="fas fa-check me-1"></i> Tạo Coupon
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-lg-8">
+            <div class="coupon-card">
+                <div class="card-header-custom" style="color: #1cc88a;">
+                    <i class="fas fa-ticket-alt me-2"></i> Danh sách mã giảm giá
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table-custom" id="myTable">
+                        <thead>
+                            <tr>
+                                <th>Tên mã</th>
+                                <th>Ngày tạo</th>
+                                <th>Ngày hết hạn</th>
+                                <th class="text-center">Giảm (%)</th>
+                                <th>Trạng thái</th> <th>Thời hạn</th>   </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var coupon in ViewBag.Coupons)
                             {
-                                <span class="text text-danger">Today</span>
+                                <tr>
+                                    <td>
+                                        <strong>@coupon.Name</strong><br/>
+                                        <small class="text-muted">@coupon.Description</small>
+                                    </td>
+                                    <td>@coupon.DateStart.ToString("dd/MM/yyyy")</td>
+                                    <td>@coupon.DateExpried.ToString("dd/MM/yyyy")</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info text-white">@coupon.Discount%</span>
+                                    </td>
+                                    <td>
+                                        <select class="mini-select" name="Status" style="color: @(coupon.Status == 1 ? "green" : "gray"); font-weight: 600;">
+                                            @if (coupon.Status == 1)
+                                            {
+                                                <option selected value="1">Kích hoạt</option>
+                                                <option value="0">Ẩn</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="1">Kích hoạt</option>
+                                                <option selected value="0">Ẩn</option>
+                                            }
+                                        </select>
+                                    </td>
+
+                                    <td>
+                                        @if (coupon.DateExpried < DateTime.Now)
+                                        {
+                                            <span class="badge-status bg-expired">
+                                                <i class="fas fa-times-circle"></i> Đã hết hạn
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            TimeSpan remainingTime = coupon.DateExpried - DateTime.Now;
+                                            int daysRemaining = remainingTime.Days;
+                                            
+                                            @if (daysRemaining == 0)
+                                            {
+                                                <span class="badge-status bg-today">
+                                                    <i class="fas fa-exclamation-circle"></i> Hôm nay
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge-status bg-active">
+                                                    <i class="fas fa-clock"></i> Còn @daysRemaining ngày
+                                                </span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
                             }
-                            else
-                            {
-                                <span class="text text-success">@daysRemaining days left</span>
-                            }
-
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

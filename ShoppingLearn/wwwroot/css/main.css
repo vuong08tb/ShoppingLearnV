@@ -174,7 +174,7 @@ a#scrollUp i {
 }
 
 .btn-group.open .dropdown-toggle {
-  background: rgba(0, 0, 0, 0);
+  background: rgba(255, 255, 255, 0);
   box-shadow: none;
 }
 
@@ -190,6 +190,7 @@ a#scrollUp i {
   display: inline-block;
   padding-left: 15px;
   padding-right: 15px;
+  padding-top: 10px;
 }
 
 .shop-menu ul li:last-child {
@@ -221,8 +222,20 @@ a#scrollUp i {
   padding-top: 30px;
 }
 
+.header-bottom-admin {
+  padding-bottom: 30px;
+}
+
+.header-bottom-admin ul li a {
+  font-size: 14px;
+}
+
 .navbar-collapse.collapse {
   padding-left: 0;
+}
+
+.mainmenu {
+  padding: 15px;
 }
 
 .mainmenu ul li {
@@ -235,12 +248,17 @@ a#scrollUp i {
 }
 
 .mainmenu ul li a {
-  color: #696763;
+  color: rgb(74, 74, 74);
   font-family: "Roboto", sans-serif;
   font-size: 17px;
-  font-weight: 300;
+  font-weight: 600;
   padding: 0;
   padding-bottom: 10px;
+}
+
+.mainmenu > ul > li > a {
+  text-transform: uppercase;
+  font-size: 16px;
 }
 
 .mainmenu ul li a:hover,
@@ -250,17 +268,22 @@ a#scrollUp i {
   color: #fdb45e;
 }
 
+.search_box {
+  margin-top: 8px;
+}
+
 .search_box input {
   background: #f0f0e9;
   border: medium none;
   color: #b2b2b2;
   font-family: "roboto";
-  font-size: 12px;
-  font-weight: 300;
+  font-size: 14px;
+  font-weight: 500;
   height: 35px;
   outline: medium none;
   padding-left: 10px;
-  width: 155px;
+  width: 200px;
+  border-radius: 6px;
   background-image: url(../images/home/searchicon.png);
   background-repeat: no-repeat;
   background-position: 130px;
@@ -270,6 +293,14 @@ a#scrollUp i {
 
 .navbar-header .navbar-toggle .icon-bar {
   background-color: #fff;
+}
+
+.cart-icon a,
+.login-icon a {
+  color: #010101;
+  background-color: transparent !important;
+  font-size: 16px;
+  padding-top: 15px;
 }
 
 .nav.navbar-nav > li:hover > ul.sub-menu {
@@ -285,7 +316,7 @@ ul.sub-menu {
   position: absolute;
   top: 30px;
   left: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(218, 218, 218, 0.6);
   list-style: none;
   padding: 0;
   margin: 0;
@@ -294,6 +325,7 @@ ul.sub-menu {
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
   display: none;
   z-index: 999;
+  border-radius: 10px;
 }
 
 .dropdown ul.sub-menu li .active {
@@ -302,7 +334,7 @@ ul.sub-menu {
 }
 
 .navbar-nav li ul.sub-menu li {
-  padding: 10px 20px 0;
+  padding: 10px 20px;
 }
 
 .navbar-nav li ul.sub-menu li:last-child {
@@ -310,11 +342,16 @@ ul.sub-menu {
 }
 
 .navbar-nav li ul.sub-menu li a {
-  color: #fff;
+  color: #010101;
 }
 
-.navbar-nav li ul.sub-menu li a:hover {
-  color: #fdb45e;
+.navbar-nav li ul.sub-menu li:hover {
+  background-color: #6f6f6f;
+  border-radius: 5px;
+}
+
+.navbar-nav li ul.sub-menu li:hover a {
+  color: #ffff;
 }
 
 .fa-angle-down {
@@ -500,7 +537,7 @@ ul.sub-menu {
   border: 1px solid #dddddd;
   color: #ccccc6;
   font-family: "Roboto", sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   margin-top: 0;
   outline: medium none;
   padding: 7px;
@@ -648,6 +685,7 @@ ul.sub-menu {
 .left-sidebar h2,
 .brands_products h2 {
   color: #fe980f;
+  background-color: transparent;
   font-family: "Roboto", sans-serif;
   font-size: 18px;
   font-weight: 700;
@@ -673,7 +711,7 @@ h2.title:after {
 .left-sidebar h2:before {
   content: " ";
   position: absolute;
-  background: #fff;
+  background: transparent;
   bottom: -6px;
   width: 130px;
   height: 30px;
@@ -685,7 +723,7 @@ h2.title:after {
 h2.title:before {
   content: " ";
   position: absolute;
-  background: #fff;
+  background: transparent;
   bottom: -6px;
   width: 220px;
   height: 30px;
@@ -818,6 +856,8 @@ h2.title:before {
 
 h2.title {
   color: #fe980f;
+  background-color: transparent;
+  line-height: 1.5;
   font-family: "Roboto", sans-serif;
   font-size: 18px;
   font-weight: 700;

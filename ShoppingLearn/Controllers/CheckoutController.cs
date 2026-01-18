@@ -8,6 +8,7 @@ using ShoppingLearn.Repository;
 using ShoppingLearn.Services.Momo;
 using ShoppingLearn.Services.Vnpay;
 using System;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 
 namespace ShoppingLearn.Controllers
@@ -39,9 +40,46 @@ namespace ShoppingLearn.Controllers
 			}
 			else
 			{
+				Console.WriteLine("===== CHECKOUT PROCESS =====");
+
+				Console.WriteLine("request method: " + Request.Method);
+
+				// Try to read recipient info from session first (set by payment step).
+				string recipientName = HttpContext.Session.GetString("RecipientName");
+				string recipientPhone = HttpContext.Session.GetString("RecipientPhone");
+				string recipientAddress = HttpContext.Session.GetString("RecipientAddress");
+
+				Console.WriteLine("---- RECIPIENT FROM SESSION ----");
+				Console.WriteLine($"RecipientName(session) = {recipientName}");
+				Console.WriteLine($"RecipientPhone(session) = {recipientPhone}");
+				Console.WriteLine($"RecipientAddress(session) = {recipientAddress}");
+
+				// Fallback to form data if any value is missing
+				if (string.IsNullOrEmpty(recipientName) || string.IsNullOrEmpty(recipientPhone) || string.IsNullOrEmpty(recipientAddress))
+				{
+					Console.WriteLine("---- FORM DATA (fallback) ----");
+					foreach (var key in Request.Form.Keys)
+					{
+						var value = Request.Form[key].ToString();
+						Console.WriteLine($"{key} = {value}");
+
+						if (key == "RecipientName" && string.IsNullOrEmpty(recipientName))
+							recipientName = value;
+
+						if (key == "RecipientPhone" && string.IsNullOrEmpty(recipientPhone))
+							recipientPhone = value;
+
+						if (key == "RecipientAddress" && string.IsNullOrEmpty(recipientAddress))
+							recipientAddress = value;
+					}
+				}
+
 				var ordercode = Guid.NewGuid().ToString();
 				var orderItem = new OrderModel();
 				orderItem.Order_code = ordercode;
+				orderItem.Receiver = recipientName;
+				orderItem.PhoneReceiver = recipientPhone;
+				orderItem.ShippingAddress = recipientAddress;
 				// nhận shipping từ cookie
 				var shippingPriceCookie = Request.Cookies["ShippingPrice"];
 				decimal shippingPrice = 0;
@@ -143,7 +181,7 @@ namespace ShoppingLearn.Controllers
 		public async  Task<IActionResult> PaymentCallbackVnpay()
 		{
 			var response = _vnPayService.PaymentExecute(Request.Query);
-			if (response.VnPayResponseCode == "00") // giao dịch không thành công thì lưu
+			if (response.VnPayResponseCode == "00") // giao dịch  thành công thì lưu
 			{
 				var newVnpayInsert = new VnpayModel
 				{
@@ -163,7 +201,7 @@ namespace ShoppingLearn.Controllers
 			}
 			else
 			{
-				TempData["success"] = " Giao dịch Vnpay thành công";
+				TempData["success"] = " Giao dịch Vnpay không thành công";
 				return RedirectToAction("Index", "Cart");
 			}
 			return View(response);

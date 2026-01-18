@@ -41,28 +41,12 @@
 			</div>
 		</div><!--/header_top-->
 
-		<div class="header-middle">
-			<!--header-middle-->
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-4">
-						<div class="logo pull-left">
-							<a href="index.html"><img src="images/home/logo.png" alt="" /></a>
-						</div>
-						<div class="btn-group pull-right">
-						
-						</div>
-					</div>
-					
-				</div>
-			</div>
-		</div><!--/header-middle-->
 
-		<div class="header-bottom">
+		<div class="header-bottom-admin">
 			<!--header-bottom-->
 			<div class="container">
 				<div class="row">
-					<div class="col-sm-9">
+					<div class="col-sm-12">
 						<div class="navbar-header">
 							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 								<span class="sr-only">Toggle navigation</span>
@@ -71,11 +55,11 @@
 								<span class="icon-bar"></span>
 							</button>
 						</div>
-						<div class="mainmenu pull-left">
+						<div class="mainmenu">
 							<ul class="nav navbar-nav collapse navbar-collapse">
-								<li><a asp-action="Index" asp-controller="Home" asp-area="" class="active">Home</a></li>
-								<li><a asp-action="Index" asp-controller="Dashboard">Dashboard</a></li>
+								<li><a asp-action="Index" asp-controller="Home" asp-area="">Home</a></li>
 								<li><a asp-action="Index"  asp-controller="Product">Products</a></li>
+								<li><a asp-action="Index" asp-controller="Dashboard">Dashboard</a></li>
 								<li><a asp-action="Index"  asp-controller="Shipping">Shippings</a></li>
 								<li><a asp-action="Index"  asp-controller="Coupon">Coupons</a></li>
 								<li><a asp-action="Index"  asp-controller="Category">Categories</a></li>
@@ -87,11 +71,7 @@
 							</ul>
 						</div>
 					</div>
-					<div class="col-sm-3">
-						<div class="search_box pull-right">
-							<input type="text" placeholder="Search" />
-						</div>
-					</div>
+			
 				</div>
 			</div>
 		</div><!--/header-bottom-->
@@ -157,3 +137,139 @@
 	@await RenderSectionAsync("Scripts",required:false)
 </body>
 </html>
+
+<style>
+	/* Tổng thể bảng */
+#myTable {
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Tạo khoảng cách giữa các hàng */
+    margin-top: 20px;
+}
+
+#myTable thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 15px;
+}
+
+#myTable tbody tr {
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+#myTable tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background-color: #fffdfa;
+}
+
+#myTable td {
+    vertical-align: middle !important;
+    padding: 15px;
+    border: none;
+}
+
+/* Hình ảnh sản phẩm */
+#myTable img {
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+#myTable img:hover {
+    transform: scale(1.1);
+}
+
+/* Định dạng số lượng và giá */
+.quantity-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.price-text {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* Nút bấm quản lý */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-sm {
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+/* 1. Bo tròn nút Add Product */
+.btn-primary {
+    border-radius: 50px !important; /* Bo tròn hoàn toàn */
+    padding: 8px 24px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+/* 2. Tiêu đề cột: To, đậm, căn giữa và chống vỡ dòng */
+#myTable thead th {
+    text-align: center !important;
+    vertical-align: middle;
+    font-weight: 700 !important;
+    font-size: 13px;
+    color: #333;
+    white-space: nowrap; /* Giữ tiêu đề trên 1 dòng */
+    background-color: #f8f9fa;
+    padding: 15px 10px !important;
+}
+
+/* Căn giữa nội dung trong các ô body */
+#myTable tbody td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 8px;
+}
+
+/* 3. Nút Add Quantity: Tạo kiểu giống nút Add Product, không xuống dòng */
+.add-quantity-btn {
+    display: inline-block;
+    white-space: nowrap; /* Không cho xuống dòng */
+    background-color: #ff9800; /* Màu cam giống Add Product */
+    color: white !important;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    text-decoration: none !important;
+    margin-top: 5px;
+    transition: opacity 0.2s;
+}
+
+.add-quantity-btn:hover {
+    opacity: 0.8;
+}
+
+/* 4. Nút Edit và Delete: Chiều dài bằng nhau và có khoảng cách */
+.action-buttons {
+    display: flex;
+    flex-direction: column; /* Xếp chồng dọc để tiết kiệm chiều ngang */
+    gap: 8px; /* Khoảng cách giữa 2 nút */
+    align-items: center;
+}
+
+.action-buttons .btn {
+    width: 80px; /* Cố định chiều dài để bằng nhau */
+    border-radius: 6px;
+    margin: 0 !important; /* Xóa margin mặc định để dùng gap */
+    display: block;
+}
+
+</style>

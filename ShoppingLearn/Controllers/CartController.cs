@@ -160,6 +160,10 @@ namespace ShoppingLearn.Controllers
 				};
 
 				Response.Cookies.Append("ShippingPrice", shippingPriceJson, cookieOptions);
+
+				// Save combined address (phuong, quan, tinh) to cookie for use during checkout
+				var shippingAddressJson = JsonConvert.SerializeObject($"{phuong}, {quan}, {tinh}");
+				Response.Cookies.Append("ShippingAddress", shippingAddressJson, cookieOptions);
 			}
 			catch (Exception ex)
 			{
@@ -174,6 +178,7 @@ namespace ShoppingLearn.Controllers
 		public IActionResult DeleteShipping()
 		{
 			Response.Cookies.Delete("ShippingPrice");
+			Response.Cookies.Delete("ShippingAddress");
 			return RedirectToAction("Index","Cart");
 		}
 		// hàm getcoupon

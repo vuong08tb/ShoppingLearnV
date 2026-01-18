@@ -1,256 +1,560 @@
 ﻿@using ShoppingLearn.Models.ViewModels
 @model CartItemViewModel
-<section id="cart_items">
-	<div class="container">
-		<div class="breadcrumbs">
-			<ol class="breadcrumb">
-				<li><a href="#">Home</a></li>
-				<li class="active">Shopping Cart</li>
-			</ol>
-		</div>
-		<div class="table-responsive cart_info">
-			<table class="table table-condensed">
-				<thead>
-					<tr class="cart_menu">
-						<th class="image" style="width: 100px;">Item</th>
-						<th colspan="4" class="description" style="width: 120px;">Title</th>
-						<th class="price">Price</th>
-						<th class="quantity" style="width: 120px;">Quantity</th>
-						<th class="total">Total</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					@if (Model.CartItems.Count > 0)
+
+@{
+	ViewData["Title"] = "Thanh toán";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<style>
+	/* --- CẤU HÌNH GIAO DIỆN --- */
+	:root {
+		--primary: #4361ee;
+		--bg: #f8f9fd;
+	}
+
+	body {
+		font-family: 'Nunito', sans-serif;
+		background-color: var(--bg);
+		color: #2b2d42;
+		font-size: 16px;
+	}
+
+	/* Card Thủy Tinh */
+	.glass-card {
+		background: #fff;
+		border-radius: 20px;
+		border: none;
+		box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+		padding: 30px;
+		margin-bottom: 25px;
+	}
+
+	/* List Sản phẩm */
+	.cart-item {
+		display: flex;
+		align-items: center;
+		padding: 20px 0;
+		border-bottom: 1px dashed #e0e0e0;
+	}
+
+	.cart-item:last-child {
+		border-bottom: none;
+	}
+
+	.item-img {
+		width: 80px;
+		height: 80px;
+		border-radius: 12px;
+		object-fit: cover;
+	}
+
+	.item-info {
+		flex: 1;
+		padding-left: 20px;
+	}
+
+	.item-price {
+		color: var(--primary);
+		font-weight: 800;
+		font-size: 1.1rem;
+	}
+
+	/* Nút số lượng */
+	.qty-pill {
+		display: inline-flex;
+		background: #f1f3f9;
+		border-radius: 50px;
+		padding: 4px;
+	}
+
+	.btn-qty {
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		border: none;
+		background: #fff;
+		color: var(--primary);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-decoration: none;
+		font-weight: 900;
+		transition: 0.2s;
+	}
+
+	.btn-qty:hover {
+		background: var(--primary);
+		color: #fff;
+	}
+
+	.qty-val {
+		width: 40px;
+		text-align: center;
+		border: none;
+		background: transparent;
+		font-weight: 700;
+	}
+
+	.item-img {
+		width: 120px;
+		height: 120px;
+		/* Tăng kích thước ảnh */
+		border-radius: 16px;
+		object-fit: cover;
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+	}
+
+	.item-info {
+		flex: 1;
+		padding-left: 25px;
+	}
+
+
+	.item-name {
+		font-size: 1.3rem;
+		/* Chữ to hơn */
+		font-weight: 800;
+		color: #1a1a2e;
+		margin-bottom: 5px;
+		line-height: 1.3;
+	}
+
+	.item-price {
+		color: var(--primary);
+		font-weight: 800;
+		font-size: 1.2rem;
+		/* Giá to hơn */
+		margin-bottom: 15px;
+	}
+
+
+	.qty-pill {
+		display: inline-flex;
+		background: #f0f2f5;
+		border-radius: 12px;
+		padding: 5px;
+		align-items: center;
+	}
+
+	.btn-qty {
+		width: 40px;
+		height: 40px;
+		/* Nút bấm to */
+		border-radius: 10px;
+		border: none;
+		background: #fff;
+		color: var(--primary);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-decoration: none;
+		font-size: 1.5rem;
+		font-weight: 700;
+		/* Dấu + - to */
+		transition: 0.2s;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+		line-height: 0;
+	}
+
+	.btn-qty:hover {
+		background: var(--primary);
+		color: #fff;
+	}
+
+	/* Số lượng ở giữa */
+	.qty-val {
+		width: 50px;
+		text-align: center;
+		border: none;
+		background: transparent;
+		font-weight: 800;
+		font-size: 1.3rem;
+		/* Số to đùng */
+		color: #333;
+	}
+
+	/* Nút xóa */
+	.btn-remove {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		color: #e74a3b;
+		font-weight: 700;
+		font-size: 1rem;
+		text-decoration: none;
+		padding: 8px 15px;
+		border-radius: 10px;
+		transition: 0.2s;
+	}
+
+	.btn-remove:hover {
+		background: #ffebee;
+	}
+
+	/* --- PHẦN THANH TOÁN --- */
+	.payment-option {
+		display: flex;
+		align-items: center;
+		background: #fff;
+		border: 2px solid #f0f0f0;
+		border-radius: 10px;
+		padding: 10px 15px;
+		margin-bottom: 8px;
+		cursor: pointer;
+		transition: all 0.2s;
+		position: relative;
+		height: 60px;
+	}
+
+	.payment-option:hover {
+		background: #f8fafc;
+		border-color: #cbd5e1;
+	}
+
+	.payment-option.selected {
+		border-color: var(--primary);
+		background: #eef2ff;
+		box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+	}
+
+	.payment-logo {
+		width: 40px;
+		height: 40px;
+		object-fit: contain;
+		margin-right: 15px;
+	}
+
+	.check-icon {
+		margin-left: auto;
+		color: var(--primary);
+		opacity: 0;
+		transform: scale(0.5);
+		transition: 0.2s;
+	}
+
+	.payment-option.selected .check-icon {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	/* Nút Thanh Toán */
+	.btn-checkout-wrap {
+		display: none;
+		margin-top: 20px;
+	}
+
+	.btn-main {
+		width: 100%;
+		padding: 18px;
+		border-radius: 16px;
+		border: none;
+		color: white;
+		font-size: 1.1rem;
+		font-weight: 800;
+		text-transform: uppercase;
+		cursor: pointer;
+		transition: 0.2s;
+		box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+	}
+
+	.btn-main:hover {
+		transform: translateY(-3px);
+		filter: brightness(1.1);
+	}
+
+	.grad-cod {
+		background: linear-gradient(135deg, #10b981, #059669);
+	}
+
+	.grad-momo {
+		background: linear-gradient(135deg, #d81b60, #ad1457);
+	}
+
+	.grad-vnpay {
+		background: linear-gradient(135deg, #0288d1, #0277bd);
+	}
+
+	/* Input Form */
+	.c-input {
+		background: #f8f9fa;
+		border: 1px solid #eee;
+		border-radius: 12px;
+		padding: 12px;
+		width: 100%;
+		margin-bottom: 10px;
+		font-weight: 600;
+		outline: none;
+	}
+
+	.c-input:focus {
+		border-color: var(--primary);
+		background: #fff;
+	}
+
+	/* Ô địa chỉ cụ thể */
+	.address-textarea {
+		resize: none;
+		height: 80px;
+	}
+</style>
+
+<div class="container py-5">
+	<div class="row g-4">
+		<div class="col-lg-7">
+			<div class="glass-card">
+				<h4 class="fw-bold mb-4"><i class="fas fa-shopping-bag me-2 text-primary"></i> Giỏ hàng
+					(@Model.CartItems.Count)</h4>
+
+				@if (Model.CartItems.Count > 0)
+				{
+					@foreach (var item in Model.CartItems)
 					{
-						@foreach (var item in Model.CartItems)
-						{
-							<tr>
-								<td class="cart_product">
-									<a href=""><img src="~/media/products/@item.Image" alt="" width="70px" height="70px"></a>
-								</td>
-								<td colspan='4' class="cart_description fw-500">
-									@* <h4><a href="">@item.ProductName</a></h4> *@
-									<span>@item.ProductName</span>
-								</td>
-								<td class="cart_price">
-									<p>@item.Price.ToString("#,##0 VNĐ")</p>
-								</td>
-								<td class="" >
-
-									<a class="btn btn-success btn-sm" asp-controller="Cart" asp-action="Increase" asp-route-id="@item.ProductId"> + </a>
-										<input class="cart_quantity_input" type="text" name="quantity" value="@item.Quantity" autocomplete="off" size="2">
-										<a class="btn btn-success btn-sm" asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.ProductId"> - </a>
-										@* <a class="btn btn-danger btn-sm" asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId"> Remove </a> *@
-							
-								</td>
-								<td class="cart_total">
-									<p class="cart_total_price">@Model.CartItems.Where(x => x.ProductId == item.ProductId).Sum(x => x.Quantity * x.Price).ToString("#,##0 VNĐ")</p>
-								</td>
-								<td class="cart_delete">
-									<a class="cart_quantity_delete" asp-action="Remove" asp-controller="Cart" asp-route-id="@item.ProductId"><i class="fa fa-times"></i></a>
-								</td>
-							</tr>
-						}
-					
-						<tr>
-							<td colspan="5">  
-								GrandTotal: <p class="cart_total_price" id="grand_price"> @Model.GrandTotal.ToString("#,##0 VNĐ") </p>
-								<form>
-									Coupon Code: <input type="text" class="form-control coupon-value" />
-									<span class="text text-success" id="coupon_text">@Model.CouponCode</span> <br />
-
-									<input type="button" value="Apply" class="btn btn-sm btn-primary btn-apply-coupon btn-apply" />
-								</form>
-
-								Shipping Cost: <p class="cart_total_price" id="shipping_text"> @Model.ShippingCost.ToString("#,##0 VNĐ") </p>
-								<p> <a asp-action="DeleteShipping" asp-controller="Cart">Xóa shipping</a>  </p>
-							    </td>
-							    <td>
-							<div class="form-group">
-									<label>Tỉnh thành phố</label>
-									<select class="css_select" id="tinh" name="tinh" class="form-control" title="Chọn Tỉnh Thành">
-										<option value="0">Tỉnh Thành</option>
-									</select>
+						<div class="cart-item">
+							<img src="~/media/products/@item.Image" class="item-img" alt="SP">
+							<div class="item-info">
+								<div class="fw-bold mb-1">@item.ProductName</div>
+								<div class="item-price">@item.Price.ToString("#,##0") đ</div>
+								<div class="d-flex align-items-center mt-2">
+									<div class="qty-pill">
+										<a class="btn-qty" asp-action="Decrease" asp-controller="Cart"
+											asp-route-id="@item.ProductId">-</a>
+										<input class="qty-val" value="@item.Quantity" readonly>
+										<a class="btn-qty" asp-action="Increase" asp-controller="Cart"
+											asp-route-id="@item.ProductId">+</a>
+									</div>
+									<a asp-action="Remove" asp-controller="Cart" asp-route-id="@item.ProductId"
+										class="ms-auto text-danger small text-decoration-none fw-bold"><i
+											class="fas fa-trash"></i> Xóa</a>
+								</div>
 							</div>
-
-								<div class="form-group">
-									<label>Quận huyện</label>
-									<select class="css_select" id="quan" name="quan" class="form-control" title="Chọn Quận Huyện">
-										<option value="0">Quận Huyện</option>
-									</select>
-								</div>
-
-								<div class="form-group">
-									<label>Phường Xã</label>
-									<select class="css_select" id="phuong" name="phuong" class="form-control" title="Chọn Phường Xã">
-										<option value="0">Phường Xã</option>
-									</select>
-								</div>
-								<button type="button" class="btn btn-primary btn-add-shipping btn-apply">Tính phí vận chuyển</button>
-							</td>
-							@if (User.Identity?.IsAuthenticated ?? false)
-							{
-								<td> 
-									@if(@Model.ShippingCost <= 0)
-									{
-										<span class="text text-danger">Yêu cầu tính phí vận chuyển trước khi đặt hàng </span>
-									}
-									else
-									{
-										@* <a  class="btn btn-primary btn-sm" asp-controller="Checkout" asp-action="Checkout"> Đặt hàng </a> *@
-									}
-
-								</td>
-								<td>
-									<a class="btn btn-danger" asp-controller="Cart" asp-action="Clear" > Clear all cart</a><br/>
-									<a disable="disable" onclick="return confirm('Xác nhận đặt hàng')" class="btn btn-primary" asp-controller="Checkout" asp-action="Checkout"> Đặt hàng </a> <br />
-									<form method="POST" asp-action="CreatePaymentMomo" asp-controller="Payment">
-										<input type="hidden" name="FullName" value="@User.Identity.Name" />
-										<input  type="hidden" name="Amount" value="@Model.GrandTotal"/>
-										
-										<input type="hidden" name="OrderInfo" value="Thanh toán Momo cho đơn hàng tại cửa hàng" />
-
-										<br />
-										<button class="btn btn-danger" name="PayUrl" type="submit">Pay with MoMo</button>
-
-									</form>
-									<form method="POST" asp-action="CreatePaymentUrlVnpay" asp-controller= "Payment">
-										<input type="hidden" name="Name" value="@User.Identity.Name" />
-										<input type="hidden" name="Amount" id="total_price" value="@Model.GrandTotal" />
-										<input type="hidden" name="Discount" id="discount" value="" />
-										<input type="hidden" name="Shipping" id="shipping_price" value="" />
-
-										<input type="hidden" name="OrderDescription" value="Thanh toán VnPay cho đơn hàng tại cửa hàng" />
-
-										<input type="hidden" name="OrderType" value="other" />
-										<br />
-										<button class="btn btn-success" type="submit">Pay with Vnpay</button>
-									</form>
-								</td>
-							}
-							
-						</tr>
+						</div>
 					}
-					else
-					{
-						<tr>
-							<td colspan="5"> <h4> Your Cart is Empty</h4></td>
-						</tr>
-					}
-				</tbody>
-			</table>
+					<div class="text-end mt-3"><a asp-action="Clear" asp-controller="Cart"
+							class="text-danger small fw-bold">XÓA TẤT CẢ</a></div>
+				}
+				else
+				{
+					<div class="text-center py-5 text-muted">Giỏ hàng trống</div>
+				}
+			</div>
+		</div>
+
+		<div class="col-lg-5">
+			<div class="glass-card">
+				<h4 class="fw-bold mb-3" style="font-size: 1.1rem;"><i
+						class="fas fa-map-marker-alt me-2 text-warning"></i> Giao hàng tới</h4>
+
+				@* <select class="c-input" id="tinh">
+					<option value="0">Tỉnh / Thành phố</option>
+				</select>
+				<select class="c-input" id="quan">
+					<option value="0">Quận / Huyện</option>
+				</select>
+				<select class="c-input" id="phuong">
+					<option value="0">Phường / Xã</option>
+				</select> *@
+
+				<div class="mb-3">
+					<label class="small fw-bold">Người nhận</label>
+					<input type="text" id="recipient_name" class="c-input" placeholder="Tên người nhận" required />
+				</div>
+
+				<div class="mb-3">
+					<label class="small fw-bold">Số điện thoại</label>
+					<input type="tel" id="recipient_phone" class="c-input" placeholder="SĐT người nhận" required />
+				</div>
+
+				<div class="mb-2">
+					<label class="small fw-bold">Địa chỉ nhận</label>
+					<textarea id="recipient_address" class="c-input address-textarea" placeholder="Số nhà, tên đường, phường, quận, tỉnh" required></textarea>
+				</div>
+
+				
+			</div>
+
+			<div class="glass-card">
+				<h4 class="fw-bold mb-3" style="font-size: 1.1rem;"><i class="fas fa-receipt me-2 text-success"></i>
+					Thanh toán</h4>
+
+				<div class="d-flex gap-2 mb-3">
+					<input type="text" class="c-input mb-0 coupon-value" placeholder="Nhập mã giảm giá">
+					<button class="btn btn-dark rounded-3 fw-bold btn-apply-coupon">Áp dụng</button>
+				</div>
+				@if (!string.IsNullOrEmpty(Model.CouponCode))
+				{
+					<div
+						class="alert alert-success py-1 small text-center mb-3">Đã dùng: @Model.CouponCode</div>
+				}
+
+				<div class="d-flex justify-content-between mb-2"><span>Tạm tính</span><span
+						class="fw-bold">@Model.CartItems.Sum(x => x.Quantity * x.Price).ToString("#,##0") đ</span></div>
+				<div class="d-flex justify-content-between mb-3">
+					<span>Phí Ship</span>
+					<span class="fw-bold text-success" id="shipping_text">@(Model.ShippingCost > 0 ?
+												Model.ShippingCost.ToString("#,##0") : "0") đ</span>
+				</div>
+				<div class="d-flex justify-content-between border-top pt-3 mb-4">
+					<span class="h5 fw-bold">Tổng cộng</span>
+					<span class="h3 fw-bold text-primary" id="grand_price">@Model.GrandTotal.ToString("#,##0") đ</span>
+				</div>
+
+				@if (User.Identity?.IsAuthenticated ?? false)
+				{
+					<div class="small fw-bold text-muted text-uppercase mb-2">Phương thức:</div>
+
+					<div class="payment-option" id="opt-cod" onclick="selectPayment('cod')">
+						<img src="https://cdn-icons-png.flaticon.com/512/2331/2331941.png" class="payment-logo">
+						<div>
+							<h6 style="font-size: 15px;" class="m-0 fw-bold">Tiền mặt (COD)</h6><small
+								class="text-muted">Thanh toán khi nhận</small>
+						</div>
+						<i class="fas fa-check-circle fa-lg check-icon"></i>
+					</div>
+
+					<div class="payment-option" id="opt-vnpay" onclick="selectPayment('vnpay')">
+
+						<div>
+							<h6 style="font-size: 15px; class=" m-0 fw-bold">VNPay</h6><small class="text-muted">ATM / QR
+								Code</small>
+						</div>
+						<i class="fas fa-check-circle fa-lg check-icon"></i>
+					</div>
+
+					<div class="payment-option" id="opt-momo" onclick="selectPayment('momo')">
+
+						<div>
+							<h6 style="font-size: 15px; class=" m-0 fw-bold">MoMo</h6><small class="text-muted">Ví điện
+								tử</small>
+						</div>
+						<i class="fas fa-check-circle fa-lg check-icon"></i>
+					</div>
+
+					<div id="action-cod" class="btn-checkout-wrap">
+						<form asp-controller="Checkout" asp-action="Checkout" method="post"
+							onsubmit="fillData(this)">
+							<input type="hidden" name="RecipientName" />
+							<input type="hidden" name="RecipientPhone" />
+							<input type="hidden" name="RecipientAddress" />
+							<button type="submit" class="btn-main grad-cod">
+								ĐẶT HÀNG NGAY (COD)
+							</button>
+						</form>
+					</div>
+					
+
+					<div id="action-vnpay" class="btn-checkout-wrap">
+						<form method="POST" asp-action="CreatePaymentUrlVnpay" asp-controller="Payment"
+							onsubmit="fillData(this)">
+							<input type="hidden" name="RecipientName" />
+							<input type="hidden" name="RecipientPhone" />
+							<input type="hidden" name="RecipientAddress" />
+							<input type="hidden" name="Name" value="@User.Identity.Name" />
+							<input type="hidden" name="Amount" value="@Model.GrandTotal" />
+							<input type="hidden" name="OrderDescription" value="Thanh toán VNPay" />
+							<input type="hidden" name="OrderType" value="other" />
+							<button class="btn-main grad-vnpay" type="submit">THANH TOÁN VNPAY</button>
+						</form>
+					</div>
+
+					<div id="action-momo" class="btn-checkout-wrap">
+						<form method="POST" asp-action="CreatePaymentMomo" asp-controller="Payment"
+							onsubmit="fillData(this)">
+							<input type="hidden" name="RecipientName" />
+							<input type="hidden" name="RecipientPhone" />
+							<input type="hidden" name="RecipientAddress" />
+							<input type="hidden" name="FullName" value="@User.Identity.Name" />
+							<input type="hidden" name="Amount" value="@Model.GrandTotal" />
+							<input type="hidden" name="OrderInfo" value="Thanh toán MoMo" />
+							<button class="btn-main grad-momo" name="PayUrl" type="submit">THANH TOÁN MOMO</button>
+						</form>
+					</div>
+				}
+				else
+				{
+					<a href="/Account/Login" class="btn btn-dark w-100 py-3 rounded-pill fw-bold mt-3">Đăng nhập để thanh
+						toán</a>
+				}
+			</div>
 		</div>
 	</div>
-</section> <!--/#cart_items-->
-@section Scripts{
+</div>
+
+@section Scripts {
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
-		$(".btn-apply-coupon").click(function () {
-			var coupon_value = $(".coupon-value").val();
-			//alert(coupon_value);
-			$.ajax({
-				type: "POST",
-				url: "@Url.Action("GetCoupon", "Cart")",
-				data: { coupon_value: coupon_value },
-				success: function (result) {
-					if (result.success) {
+		function fillData(form) {
+			form.querySelector('[name="RecipientName"]').value =
+				document.getElementById('recipient_name').value;
 
-						Swal.fire(result.message);
-						location.reload();
-					} else {
+			form.querySelector('[name="RecipientPhone"]').value =
+				document.getElementById('recipient_phone').value;
 
-						Swal.fire(result.message);
-					}
-				}
+			form.querySelector('[name="RecipientAddress"]').value =
+				document.getElementById('recipient_address').value;
+		}
 
-			});
-		});
-	</script>
-	<script>
+		function selectPayment(type) {
+			$('.payment-option').removeClass('selected');
+			$('#opt-' + type).addClass('selected');
+			$('.btn-checkout-wrap').hide();
+			$('#action-' + type).fadeIn(200);
+		}
+
+		function checkShipping() {
+			// Kiểm tra ship
+			if (@Model.ShippingCost <= 0) {
+				Swal.fire({ icon: 'warning', title: 'Chưa tính phí Ship', text: 'Vui lòng chọn địa chỉ và bấm Tính phí vận chuyển!' });
+				return false;
+			}
+			// Kiểm tra địa chỉ cụ thể
+			var address = $('.address-textarea').val();
+			if (!address || address.trim() === "") {
+				Swal.fire({ icon: 'warning', title: 'Thiếu địa chỉ', text: 'Vui lòng nhập Số nhà, tên đường cụ thể!' });
+				$('.address-textarea').focus();
+				return false;
+			}
+			return true;
+		}
+
 		$(document).ready(function () {
-			$(".btn-add-shipping").click(function () {
-				var tinh = $("#tinh").find('option:selected').text();
-				var quan = $("#quan").find('option:selected').text();
-				var phuong = $("#phuong").find('option:selected').text();
+			selectPayment('cod'); // Mặc định hiện COD
 
-				// alert(tinh);
-				// alert(quan);
-				// alert(phuong);
-				// alert(price);
-				if (tinh == '' || quan == '' || phuong == '') {
-					Swal.fire("Làm ơn ko bỏ trống.");
-				} else {
-					$.ajax({
-						type: "POST",
-						url: "@Url.Action("GetShipping", "Cart")",
-						data: { tinh: tinh, quan: quan, phuong: phuong }, // Send data to the server
-
-						success: function (result) {
-							// Handle successful update
-							if (result) {
-
-								location.reload(); 
-
-							}
-						}
-
+			// API Tỉnh thành
+			$.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function (data) {
+				if (data.error == 0) {
+					$.each(data.data, function (key, val) { $("#tinh").append('<option value="' + val.id + '">' + val.full_name + '</option>'); });
+					$("#tinh").change(function () {
+						var id = $(this).val();
+						$.getJSON('https://esgoo.net/api-tinhthanh/2/' + id + '.htm', function (data) {
+							$("#quan").html('<option value="0">Quận / Huyện</option>'); $("#phuong").html('<option value="0">Phường / Xã</option>');
+							$.each(data.data, function (key, val) { $("#quan").append('<option value="' + val.id + '">' + val.full_name + '</option>'); });
+						});
 					});
-				}
-			})
-			// lấy tỉnh thành
-			$.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function (data_tinh) {
-				if (data_tinh.error == 0) {
-					$.each(data_tinh.data, function (key_tinh, val_tinh) {
-						$("#tinh").append('<option value="' + val_tinh.id + '">' + val_tinh.full_name + '</option>');
+					$("#quan").change(function () {
+						var id = $(this).val();
+						$.getJSON('https://esgoo.net/api-tinhthanh/3/' + id + '.htm', function (data) {
+							$("#phuong").html('<option value="0">Phường / Xã</option>');
+							$.each(data.data, function (key, val) { $("#phuong").append('<option value="' + val.id + '">' + val.full_name + '</option>'); });
+						});
 					});
-					$("#tinh").change(function (e) {
-						var idtinh = $(this).val();
-						//Lấy quận huyện
-						$.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function (data_quan) {
-							if (data_quan.error == 0) {
-								$("#quan").html('<option value="0">Quận Huyện</option>');
-								$("#phuong").html('<option value="0">Phường Xã</option>');
-								$.each(data_quan.data, function (key_quan, val_quan) {
-									$("#quan").append('<option value="' + val_quan.id + '">' + val_quan.full_name + '</option>');
-								});
-								//Lấy phường xã
-								$("#quan").change(function (e) {
-									var idquan = $(this).val();
-									$.getJSON('https://esgoo.net/api-tinhthanh/3/' + idquan + '.htm', function (data_phuong) {
-										if (data_phuong.error == 0) {
-											$("#phuong").html('<option value="0">Phường Xã</option>');
-											$.each(data_phuong.data, function (key_phuong, val_phuong) {
-												$("#phuong").append('<option value="' + val_phuong.id + '">' + val_phuong.full_name + '</option>');
-											});
-										}
-									});
-								});
-
-							}
-						}); //end $.getJson
-
-					});
-
 				}
 			});
 		});
-	</script>
-	<script>
-		// document.addEventListener("DOMContentLoaded", function () {
-		document.getElementById("shipping_price").value = @Model.ShippingCost;
 
-		// Set value coupon
-		const element = document.querySelector("#coupon_text.text-success");
-		const text = element.innerText;
-
-		const match = text.match(/Giảm\s+([\d.,]+)%/);
-		const percent = match ? match[1] : null;
-		document.getElementById("discount").value = percent;
-
-		var final_price = (@Model.GrandTotal + @Model.ShippingCost) * (1 - percent/100.0);
-
-		document.getElementById("grand_price").innerText = final_price.toLocaleString("vi-VN") + " VNĐ";
-		document.getElementById("total_price").value = final_price;
-
+		$(".btn-add-shipping").click(function () {
+			var tinh = $("#tinh option:selected").text();
+			var quan = $("#quan option:selected").text();
+			var phuong = $("#phuong option:selected").text();
+			if (tinh.includes("Tỉnh") || quan.includes("Quận")) { Swal.fire("Vui lòng chọn đầy đủ Tỉnh/Huyện/Xã."); }
+			else {
+				$.ajax({ type: "POST", url: "@Url.Action("GetShipping", "Cart")", data: { tinh: tinh, quan: quan, phuong: phuong }, success: function (result) { if (result) location.reload(); } });
+			}
+		});
+		$(".btn-apply-coupon").click(function () {
+			$.ajax({ type: "POST", url: "@Url.Action("GetCoupon", "Cart")", data: { coupon_value: $(".coupon-value").val() }, success: function (r) { r.success ? Swal.fire("OK", r.message, "success").then(() => location.reload()) : Swal.fire("Lỗi", r.message, "error"); } });
+		});
 	</script>
 }

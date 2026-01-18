@@ -27,6 +27,16 @@ namespace ShoppingLearn.Controllers
 		[HttpPost]
 		public IActionResult CreatePaymentUrlVnpay(PaymentInformationModel model)
 		{
+			var recipientName = Request.Form["RecipientName"].ToString();
+			var recipientPhone = Request.Form["RecipientPhone"].ToString();
+			var recipientAddress = Request.Form["RecipientAddress"].ToString();
+			if (!string.IsNullOrEmpty(recipientName)) HttpContext.Session.SetString("RecipientName", recipientName);
+			if (!string.IsNullOrEmpty(recipientPhone)) HttpContext.Session.SetString("RecipientPhone", recipientPhone);
+			if (!string.IsNullOrEmpty(recipientAddress)) HttpContext.Session.SetString("RecipientAddress", recipientAddress);
+			Console.WriteLine("===== VNPay PAYMENT PROCESS =====");
+			Console.WriteLine("request method: " + Request.Method);
+			Console.WriteLine("recipient:" + recipientName + ", " + recipientPhone + ", " + recipientAddress);
+	
 			var url = _vnPayService.CreatePaymentUrl(model, HttpContext);
 
 			return Redirect(url);
