@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  shoppinglearn-web:
+    build:
+      context: ./ShoppingLearn
+      dockerfile: Dockerfile
+    ports:
+      - "5065:80"
+    environment:
+      - ConnectionStrings__ConnectedDb=Server=sql_server,1433;Database=Shopping;User ID=sa;Password=yourStrong(!)Password;TrustServerCertificate=True;Encrypt=False;Integrated Security=False;
+      - ASPNETCORE_URLS=http://+80
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sql_server
+
+  sql_server:
+    build:
+      context: .
+      dockerfile: db-init/Dockerfile
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=yourStrong(!)Password
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_server_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"yourStrong(!)Password\" -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  sql_server_data:

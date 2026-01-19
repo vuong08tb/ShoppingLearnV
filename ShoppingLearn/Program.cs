@@ -17,7 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 // Add DbContext
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectedDb"))
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectedDb"), sqlOptions =>
+        sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null))
 );
 // khai b�o vnpay api
 builder.Services.AddScoped<IVnPayService, VnPayService>();
@@ -102,9 +103,36 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-//// seeding data
-//var context = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
-//SeedData.SeedingData(context);
+// Apply migrations and ensure database is created with retries (helps in docker-compose startup order)
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    var context = services.GetRequiredService<DataContext>();
 
+    var maxAttempts = 30;
+    var attempt = 0;
+    while (true)
+    {
+        try
+        {
+            attempt++;
+            logger.LogInformation("Attempting to apply migrations (attempt {Attempt})...", attempt);
+            context.Database.Migrate();
+            logger.LogInformation("Database migrations applied successfully.");
+            break;
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Database migration attempt {Attempt} failed.");
+            if (attempt >= maxAttempts)
+            {
+                logger.LogError("Maximum migration attempts reached. Giving up.");
+                throw;
+            }
+            Thread.Sleep(TimeSpan.FromSeconds(5));
+        }
+    }
+}
 
 app.Run();
